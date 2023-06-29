@@ -1,0 +1,33 @@
+version: "3.1"
+
+rules:
+
+- rule: Say goodbye anytime the user says goodbye
+  steps:
+  - intent: goodbye
+  - action: utter_goodbye
+
+- rule: Say 'I am a bot' anytime the user challenges
+  steps:
+  - intent: bot_challenge
+  - action: utter_iamabot
+
+- rule: Activate form
+  steps:
+  - intent: authentication
+  - action: auth_form
+  - active_loop: auth_form
+
+- rule: Get access level
+  steps:
+  - intent: access_level
+  - action: utter_access_level
+
+  
+- rule: Auth submit and deactivate form
+  condition:
+  - active_loop: auth_form
+  steps:
+  - action: auth_form
+  - active_loop: null
+  - action: action_authenticated

@@ -1,0 +1,89 @@
+version: '3.1'
+intents:
+- affirm
+- bot_challenge
+- deny
+- goodbye
+- greet
+- mood_great
+- mood_unhappy
+- authentication
+- access_level
+
+forms:
+  auth_form:
+    required_slots:
+        - identifier
+        - password
+
+slots:
+  access_level:
+    type: text
+    initial_value: 0
+    influence_conversation: true
+    mappings:
+    - type: custom
+    
+  identifier:
+    type: text
+    initial_value: null
+    mappings:
+    - type: from_text
+      conditions:
+        - active_loop: auth_form
+          requested_slot: identifier
+  password:
+    type: text
+    mappings:
+    - type: from_text
+      conditions:
+        - active_loop: auth_form
+          requested_slot: password
+
+responses:
+  utter_greet:
+  - text: Hey! How are you?
+  
+  utter_cheer_up:
+  - text: 'Here is something to cheer you up:'
+    image: https://i.imgur.com/nGF1K8f.jpg
+  
+  utter_did_that_help:
+  - text: Did that help you?
+  
+  utter_happy:
+  - text: Great, carry on!
+  
+  utter_goodbye:
+  - text: Bye
+  
+  utter_iamabot:
+  - text: I am a bot, powered by Rasa.
+  
+  utter_ask_auth_form_identifier:
+  - text: Can you please provide me your identifier?
+  
+  utter_ask_auth_form_password:
+  - text: Thank you {identifier} for providing identifier, can you please put your password?
+  
+  utter_authenticated_successfully:
+  - text: Thank you for providing information, I have authenticated you sucessfully.
+  
+  utter_authentication_failure:
+  - text: Sorry, I wasn't able to authenticate you. Please check if your provided information is correct or not.
+  
+  utter_access_level:
+  - condition:
+    - type: slot
+      name: identifier
+      value: null
+    text: Your current access level is {access_level}
+  - text: Hey {identifier}, your current access level is {access_level}
+
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: false
+
+actions:
+- action_authenticated
+
