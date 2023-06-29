@@ -11,6 +11,11 @@ rules:
   steps:
   - intent: bot_challenge
   - action: utter_iamabot
+  
+- rule: thank you welcome
+  steps: 
+  - intent: thank
+  - action: utter_you_welcome
 
 - rule: Activate form
   steps:
@@ -23,7 +28,6 @@ rules:
   - intent: access_level
   - action: utter_access_level
 
-  
 - rule: Auth submit and deactivate form
   condition:
   - active_loop: auth_form
@@ -31,3 +35,14 @@ rules:
   - action: auth_form
   - active_loop: null
   - action: action_authenticated
+
+- rule: Handle out of scope requests
+  steps:
+  - intent: out_of_scope
+  - action: utter_out_of_scope
+  - action: utter_show_help
+  
+- rule: Ask user to rephrase their question
+  steps:
+  - intent: nlu_fallback
+  - action: utter_please_rephrase

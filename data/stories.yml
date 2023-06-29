@@ -28,3 +28,21 @@ stories:
   - action: utter_did_that_help
   - intent: deny
   - action: utter_goodbye
+
+- story: I need help
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: help
+  - action: utter_show_help
+  - intent: help
+  - action: utter_show_help_detailed
+  - intent: show_days_off
+  - action: action_show_days_off
+  - intent: thanks
+  - action: utter_you_welcome
+  
+- story: starting
+  steps:
+  - action: utter_you_welcome
+  - intent: help

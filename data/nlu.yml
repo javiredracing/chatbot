@@ -86,17 +86,56 @@ nlu:
     - are you a human?
     - am I talking to a bot?
     - am I talking to a human?
-  
 - intent: authentication
   examples: |
     - can you please make me login
     - how do I login?
-    - can you autheticate my account
+    - can you autheticate me
     - login
     - authenticate
     - log me in
-    
 - intent: access_level
   examples: |
     - show access level
     - access level
+- intent: thanks    
+  examples: |
+    - thanks
+    - thank you
+    - Thanks a lot
+- intent: help
+  examples: |
+    - I need help
+    - help
+    - Can you help me?
+    - What can you do?
+    - What can you do for me?
+    - Show me what can you do
+    - I need more help
+    - I dont know
+    - i'm lost
+    - i'm confused
+    - i need assistance
+
+- intent: out_of_scope
+  examples: |
+    - what is the weather?
+    - how is the weather in New York
+    - what's for dinner?
+    - tell me about insurance?
+    - what's my coverage?
+    - what am i covered for?
+    
+- intent: nlu_fallback
+  examples: |
+    - tell me how to change a tire
+    - something totally random
+    - i don't want insurance
+
+- intent: show_days_off
+  examples: |
+    - Show my days off
+    - Can you show me the days off?
+    - Show me free days
+    - days off
+    - holidays

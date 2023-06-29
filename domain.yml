@@ -1,20 +1,25 @@
 version: '3.1'
 intents:
+- access_level
 - affirm
+- authentication
 - bot_challenge
 - deny
 - goodbye
 - greet
+- help
 - mood_great
 - mood_unhappy
-- authentication
-- access_level
+- nlu_fallback
+- out_of_scope
+- show_days_off
+- thanks
 
 forms:
   auth_form:
     required_slots:
-        - identifier
-        - password
+    - identifier
+    - password
 
 slots:
   access_level:
@@ -23,55 +28,48 @@ slots:
     influence_conversation: true
     mappings:
     - type: custom
-    
   identifier:
     type: text
     initial_value: null
     mappings:
     - type: from_text
       conditions:
-        - active_loop: auth_form
-          requested_slot: identifier
+      - active_loop: auth_form
+        requested_slot: identifier
   password:
     type: text
     mappings:
     - type: from_text
       conditions:
-        - active_loop: auth_form
-          requested_slot: password
-
+      - active_loop: auth_form
+        requested_slot: password
+        
 responses:
   utter_greet:
-  - text: Hey! How are you?
-  
+  - text: Hey! How can i help you?
   utter_cheer_up:
   - text: 'Here is something to cheer you up:'
     image: https://i.imgur.com/nGF1K8f.jpg
-  
   utter_did_that_help:
   - text: Did that help you?
-  
   utter_happy:
   - text: Great, carry on!
-  
   utter_goodbye:
   - text: Bye
-  
+  utter_show_help:
+  - text: Esta es la información disponible -> Visualtime -> Saldos y fichajes.
+  utter_show_help_detailed:
+  - text: Puedes pedirme cuantos días de vacaciones te quedan, la bolsa de horas actual o los fichajes realizados en un día específico.
   utter_iamabot:
   - text: I am a bot, powered by Rasa.
-  
   utter_ask_auth_form_identifier:
   - text: Can you please provide me your identifier?
-  
   utter_ask_auth_form_password:
   - text: Thank you {identifier} for providing identifier, can you please put your password?
-  
   utter_authenticated_successfully:
   - text: Thank you for providing information, I have authenticated you sucessfully.
-  
   utter_authentication_failure:
   - text: Sorry, I wasn't able to authenticate you. Please check if your provided information is correct or not.
-  
   utter_access_level:
   - condition:
     - type: slot
@@ -79,11 +77,32 @@ responses:
       value: null
     text: Your current access level is {access_level}
   - text: Hey {identifier}, your current access level is {access_level}
+  utter_you_welcome:
+  - text: You are welcome
+  - text: I'm happy to help
+  - text: You got it.
+  - text: Don't mention it.
+  - text: No worries.
+  - text: Not a problem.
+  - text: My pleasure.
+  - text: It was nothing.
+  - text: I'm happy to help.
+  - text: Not at all.
+  utter_out_of_scope:
+  - text: I don't understand what you're asking.
+  utter_please_rephrase:
+  - text: I didn't quite understand that. Could you please rephrase?
 
 session_config:
   session_expiration_time: 60
   carry_over_slots_to_new_session: false
 
 actions:
+- utter_out_of_scope
+- utter_please_rephrase
+- utter_you_welcome
+- utter_show_help
+- utter_show_help_detailed
+- utter_greet
 - action_authenticated
-
+- action_show_days_off
