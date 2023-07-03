@@ -14,19 +14,15 @@ rules:
   
 - rule: thank you welcome
   steps: 
-  - intent: thank
-  - action: utter_you_welcome
+  - intent: thanks
+  - action: utter_thanks
 
 - rule: Activate form
   steps:
   - intent: authentication
+  - action: action_clear_login
   - action: auth_form
   - active_loop: auth_form
-
-- rule: Get access level
-  steps:
-  - intent: access_level
-  - action: utter_access_level
 
 - rule: Auth submit and deactivate form
   condition:
@@ -34,7 +30,14 @@ rules:
   steps:
   - action: auth_form
   - active_loop: null
+  - slot_was_set:
+    - requested_slot: null
   - action: action_authenticated
+  
+- rule: Get access level
+  steps:
+  - intent: access_level
+  - action: utter_access_level
 
 - rule: Handle out of scope requests
   steps:

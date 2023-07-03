@@ -40,9 +40,15 @@ stories:
   - intent: show_days_off
   - action: action_show_days_off
   - intent: thanks
-  - action: utter_you_welcome
+  - action: utter_thanks
   
-- story: starting
+
+- story: interactive_story_1
   steps:
-  - action: utter_you_welcome
-  - intent: help
+  - intent: show_days_off
+  - action: action_show_days_off
+
+- story: show holidays
+  steps:
+  - intent: show_holidays
+  - action: action_show_holidays

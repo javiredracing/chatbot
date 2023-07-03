@@ -48,6 +48,7 @@ nlu:
     - don't like that
     - no way
     - not really
+
 - intent: mood_great
   examples: |
     - perfect
@@ -98,7 +99,7 @@ nlu:
   examples: |
     - show access level
     - access level
-- intent: thanks    
+- intent: thanks
   examples: |
     - thanks
     - thank you
@@ -116,7 +117,6 @@ nlu:
     - i'm lost
     - i'm confused
     - i need assistance
-
 - intent: out_of_scope
   examples: |
     - what is the weather?
@@ -125,17 +125,35 @@ nlu:
     - tell me about insurance?
     - what's my coverage?
     - what am i covered for?
-    
 - intent: nlu_fallback
   examples: |
     - tell me how to change a tire
     - something totally random
     - i don't want insurance
-
 - intent: show_days_off
   examples: |
     - Show my days off
     - Can you show me the days off?
     - Show me free days
     - days off
+    - show me my days off
+    - show my days off
+    
+- intent: show_holidays
+  examples: |
+    - Show my holidays
+    - Can you show me my holidays?
+    - Current holidays
     - holidays
+    - How many holidays i spent?
+    - Holidays spent
+    
+- intent: retry
+  examples: |
+    - I want to try again
+    - retry
+
+- intent: username
+  examples: |
+    - jfernandez
+    - mrodriguez

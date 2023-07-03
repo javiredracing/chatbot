@@ -12,38 +12,47 @@ intents:
 - mood_unhappy
 - nlu_fallback
 - out_of_scope
+- retry
 - show_days_off
+- show_holidays
 - thanks
+- username
 
 forms:
   auth_form:
     required_slots:
     - identifier
     - password
-
 slots:
   access_level:
     type: text
-    initial_value: 0
     influence_conversation: true
+    initial_value: 0
     mappings:
     - type: custom
   identifier:
     type: text
     initial_value: null
+    influence_conversation: true
     mappings:
     - type: from_text
+      not_intent:
+      - bot_challenge
+      - help
+      - affirm
+      - deny
       conditions:
       - active_loop: auth_form
         requested_slot: identifier
+      
   password:
     type: text
+    influence_conversation: false
     mappings:
     - type: from_text
       conditions:
       - active_loop: auth_form
         requested_slot: password
-        
 responses:
   utter_greet:
   - text: Hey! How can i help you?
@@ -77,7 +86,7 @@ responses:
       value: null
     text: Your current access level is {access_level}
   - text: Hey {identifier}, your current access level is {access_level}
-  utter_you_welcome:
+  utter_thanks:
   - text: You are welcome
   - text: I'm happy to help
   - text: You got it.
@@ -92,17 +101,22 @@ responses:
   - text: I don't understand what you're asking.
   utter_please_rephrase:
   - text: I didn't quite understand that. Could you please rephrase?
-
+  utter_retry:
+  - text: Do you want to log in again?
+  utter_default:
+  - text: I didn't quite understand that. Do ask another question.
 session_config:
   session_expiration_time: 60
   carry_over_slots_to_new_session: false
-
 actions:
+- utter_show_help_detailed
+- action_authenticated
+- action_clear_login
+- action_show_holidays
+- utter_show_help
+- utter_retry
+- utter_greet
+- action_show_days_off
 - utter_out_of_scope
 - utter_please_rephrase
-- utter_you_welcome
-- utter_show_help
-- utter_show_help_detailed
-- utter_greet
-- action_authenticated
-- action_show_days_off
+- utter_thanks
