@@ -30,14 +30,12 @@ class VisualtimeApi:
             today = datetime.date.today()
             year = today.year
             start_date = '{}-01-01 00:00:00 +01'.format(year)
-            print (start_date)
            
         if date2 == None :
             today = datetime.date.today()
             if date1 == None:                
                 year = today.year
                 end_date = '{}-12-31 23:59:50 +01'.format(year)
-                print (end_date)
             else:
                 t = datetime.datetime(today.year + 1, today.month, 1, 0, 0)
                 endDate = t.strftime('%Y-%m-%d H%:M%:S%') + " +01"
