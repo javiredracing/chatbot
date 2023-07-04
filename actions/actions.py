@@ -45,9 +45,16 @@ class Holidays(Action):
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         identifier = tracker.get_slot("identifier")
         if identifier != None:
-            code = 457
-            result = VisualtimeApi.getHolidays(code)
-            dispatcher.utter_message(text = result)
+            userCode = VisualtimeApi.getIdentifier(identifier)
+            result = "User not exist"
+            if userCode != None:
+                result = VisualtimeApi.getHolidays(userCode)                
+                dispatcher.utter_message(text = result)
+                result = VisualtimeApi.getAccruals(userCode, "VAC")
+                if result != None:
+                    dispatcher.utter_message(text = result)
+            else:
+                dispatcher.utter_message(text = result)
         else:
             dispatcher.utter_message(response = "utter_authentication_failure")
         return[]
