@@ -13,16 +13,21 @@ intents:
 - nlu_fallback
 - out_of_scope
 - retry
+- show_accruals
 - show_days_off
 - show_holidays
 - thanks
 - username
+
+entities:
+- accruals
 
 forms:
   auth_form:
     required_slots:
     - identifier
     - password
+
 slots:
   access_level:
     type: text
@@ -53,6 +58,7 @@ slots:
       conditions:
       - active_loop: auth_form
         requested_slot: password
+
 responses:
   utter_greet:
   - text: Hey! How can i help you?
@@ -105,9 +111,11 @@ responses:
   - text: Do you want to log in again?
   utter_default:
   - text: I didn't quite understand that. Do ask another question.
+
 session_config:
   session_expiration_time: 60
   carry_over_slots_to_new_session: false
+
 actions:
 - utter_show_help_detailed
 - action_authenticated
@@ -117,6 +125,7 @@ actions:
 - utter_retry
 - utter_greet
 - action_show_days_off
+- action_show_accruals
 - utter_out_of_scope
 - utter_please_rephrase
 - utter_thanks

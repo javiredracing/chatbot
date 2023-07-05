@@ -10,6 +10,7 @@ class VisualtimeApi:
     URL = URI + "/ScheduleService.svc/"
     URL_EMPLOYEE = URI + "/EmployeeService.svc/"
     URL_ACCRUALS = URI + "/AccrualsService.svc/"
+    
     @staticmethod
     def getPublicHolidays():
         contents = urllib.request.urlopen(VisualtimeApi.URL + "GetPublicHolidays?Token="+VisualtimeApi.TOKEN).read()
@@ -27,8 +28,8 @@ class VisualtimeApi:
     @staticmethod
     def getHolidays(employeeID, start_date = None, end_date = None):
         today = datetime.datetime.now()            
-        if end_date == None :           
-            if start_date == None:                
+        if end_date is None :           
+            if start_date is None:                
                 year = today.year
                 end_date = '{}-12-31 23:59:50'.format(year)
             else:
@@ -37,7 +38,7 @@ class VisualtimeApi:
         else:
             end_date = end_date + " 23:59:50"
         
-        if start_date == None:            
+        if start_date is None:            
             year = today.year
             start_date = '{}-01-01 00:00:00'.format(year)
         else:
@@ -75,7 +76,7 @@ class VisualtimeApi:
         return identifier
     
     @staticmethod     
-    def getAccruals(employeeID, params = None):
+    def getAccruals(employeeID, params=None):
         now = datetime.datetime.now()
         atDate = now.strftime("%Y-%m-%d %H:%M:%S") + " +01"
         atDate = urllib.parse.quote(atDate)
@@ -85,44 +86,43 @@ class VisualtimeApi:
         x.title = "Current accruals at " + now.strftime("%d/%m/%Y")
         empty_list = True
         for accrual in data_json["Value"]:
-            if accrual["AccrualShortName"] == "Vpe" and (params == "VAC" or params == None):
+            if accrual["AccrualShortName"] == "Vpe" and (params == "VAC" or params is None):
                 x.add_column("Vacaciones pendientes", [str(accrual["AccrualValue"]) + " días"])
                 empty_list = False
-            elif accrual["AccrualShortName"] == "VAA"  and (params == "VAC" or params == None):
+            elif accrual["AccrualShortName"] == "VAA"  and (params == "VAC" or params is None):
                 if accrual["AccrualValue"] > 0:
                     x.add_column("Vacaciones año anterior", [str(accrual["AccrualValue"]) + " días"])
                     empty_list = False
-            elif accrual["AccrualShortName"] == "APD"  and (params == "VAC" or params == None):
+            elif accrual["AccrualShortName"] == "APD"  and (params == "VAC" or params is None):
                 x.add_column("Asuntos propios pendientes", [str(accrual["AccrualValue"]) + " días"])
                 empty_list = False
-            elif accrual["AccrualShortName"] == "BHS"  and (params == "BHS" or params == None):
+            elif accrual["AccrualShortName"] == "BHS"  and (params == "BHS" or params is None):
                 timeformat = ""
                 if accrual["AccrualValue"] >= 0.0:   
-                    timeformat = '{0:02.0f}:{1:02.0f}'.format(*divmod(accrual["AccrualValue"] * 60, 60))                    
+                    timeformat = '+{0:02.0f}:{1:02.0f}'.format(*divmod(accrual["AccrualValue"] * 60, 60))                    
                 else:
-                    value = value * -1.0
-                    timeformat = '-{0:02.0f}:{1:02.0f}'.format(*divmod(accrual["AccrualValue"] * 60, 60))               
+                    timeformat = '-{0:02.0f}:{1:02.0f}'.format(*divmod(accrual["AccrualValue"] * 60 * -1, 60))               
                 x.add_column("Bolsa horas mensual", [timeformat])
                 empty_list = False
-            elif accrual["AccrualShortName"] == "LCD"  and (params == "LCD" or params == None):
+            elif accrual["AccrualShortName"] == "LCD"  and (params == "LAC" or params is None):
                 if accrual["AccrualValue"] > 0:
                     x.add_column("Lactancia", [str(accrual["AccrualValue"]) + " días"])
                     empty_list = False 
-            elif accrual["AccrualShortName"] == "LCH"  and (params == "LCH" or params == None):
+            elif accrual["AccrualShortName"] == "LCH"  and (params == "LAC" or params is None):
                 if accrual["AccrualValue"] > 0:
                     timeformat = '{0:02.0f}:{1:02.0f}'.format(*divmod(accrual["AccrualValue"] * 60, 60))
                     x.add_column("Lactancia", [timeformat])      
                     empty_list = False
-            elif accrual["AccrualShortName"] == "HSM"  and (params == "HSM" or params == None):
+            elif accrual["AccrualShortName"] == "HSM"  and (params == "HSM" or params is None):
                 if accrual["AccrualValue"] > 0:
                     timeformat = '{0:02.0f}:{1:02.0f}'.format(*divmod(accrual["AccrualValue"] * 60, 60))
                     x.add_column("Horas sindicales", [timeformat])     
                     empty_list = False
-            elif accrual["AccrualShortName"] == "PAU"  and (params == "PAU" or params == None):
+            elif accrual["AccrualShortName"] == "PAU"  and (params == "PAU" or params is None):
                 timeformat = '{0:02.0f}:{1:02.0f}'.format(*divmod(accrual["AccrualValue"] * 60, 60))
                 x.add_column("Horas recuperables anual", [timeformat])
                 empty_list = False
-            elif accrual["AccrualShortName"] == "SCD"  and (params == "SCD" or params == None):
+            elif accrual["AccrualShortName"] == "SCD"  and (params == "SCD" or params is None):
                 if accrual["AccrualValue"] > 0:
                     timeformat = '{0:02.0f}:{1:02.0f}'.format(*divmod(accrual["AccrualValue"] * 60, 60))
                     x.add_column("Horas compensadas pendientes", [timeformat])

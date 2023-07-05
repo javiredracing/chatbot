@@ -52,3 +52,8 @@ stories:
   steps:
   - intent: show_holidays
   - action: action_show_holidays
+  
+- story: show accruals
+  steps:
+  - intent: show_accruals
+  - action: action_show_accruals

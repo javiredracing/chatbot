@@ -44,21 +44,38 @@ class Holidays(Action):
     
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         identifier = tracker.get_slot("identifier")
-        if identifier != None:
+        if identifier is not None:
             userCode = VisualtimeApi.getIdentifier(identifier)
             result = "User not exist"
-            if userCode != None:
+            if userCode is not None:
                 result = VisualtimeApi.getHolidays(userCode)                
                 dispatcher.utter_message(text = result)
                 result = VisualtimeApi.getAccruals(userCode, "VAC")
-                if result != None:
-                    dispatcher.utter_message(text = result)
-            else:
-                dispatcher.utter_message(text = result)
+                if result is None:
+                    result = "No info found"
+            dispatcher.utter_message(text = result)
         else:
             dispatcher.utter_message(response = "utter_authentication_failure")
         return[]
 
+class Accruals(Action):
+    def name(self) -> Text:
+        return "action_show_accruals"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        identifier = tracker.get_slot("identifier")
+        accrual = next(tracker.get_latest_entity_values("accruals"), None)
+        if identifier is not None:
+            userCode = VisualtimeApi.getIdentifier(identifier)
+            result = "User not exist"
+            if userCode is not None:
+                result = VisualtimeApi.getAccruals(userCode, accrual)
+                if result is None:                    
+                    result = "No info found"
+            dispatcher.utter_message(text = result)
+        else:
+            dispatcher.utter_message(response = "utter_authentication_failure")
+        
 class ClearLogin(Action): 
     def name(self) -> Text:
         return "action_clear_login"

@@ -148,6 +148,16 @@ nlu:
     - How many holidays i spent?
     - Holidays spent
     
+- intent: show_accruals
+  examples:  |
+    - show my accruals
+    - show my [bolsa de horas]{"entity": "accruals", "value": "BHS"}
+    - [bolsa de horas]{"entity": "accruals", "value": "BHS"}
+    - [lactancia]{"entity": "accruals", "value": "LAC"}
+    - Show my [lactancia]{"entity": "accruals", "value": "LAC"}
+    - Show my [horas sindicales]{"entity": "accruals", "value": "HSM"}
+    - [Horas sindicales]{"entity": "accruals", "value": "HSM"}
+    
 - intent: retry
   examples: |
     - I want to try again
