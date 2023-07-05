@@ -48,7 +48,7 @@ class VisualtimeApi:
         date2 = datetime.datetime.strptime(end_date, '%Y-%m-%d %H:%M:%S')         
         if date1 < date2:        
             start_date = urllib.parse.quote(start_date + " +01")
-            end_date = urllib.parse.quote(end_date + " +01")              
+            end_date = urllib.parse.quote(end_date + " +01")             
             contents = urllib.request.urlopen(VisualtimeApi.URL + "GetHolidays?Token=" + VisualtimeApi.TOKEN + "&StartDate=" + start_date + "&EndDate=" + end_date + "&EmployeeID=" + employeeID).read()
             data_json = json.loads(contents) 
             x = PrettyTable()
@@ -62,7 +62,7 @@ class VisualtimeApi:
                 x.add_row([datetime1, day["ReasonName"]])
             return x.get_string()    
         else:
-            return "Init date must be higher than ending date"
+            return None
     
     @staticmethod   
     def getIdentifier(username):
@@ -72,7 +72,6 @@ class VisualtimeApi:
         identifier = None
         for user in data_json["Value"]:
             identifier = user["ID"]
-        
         return identifier
     
     @staticmethod     

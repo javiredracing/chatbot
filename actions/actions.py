@@ -20,14 +20,15 @@ class AuthenticatedAction(Action):
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         identifier = tracker.get_slot("identifier")
         password = tracker.get_slot("password")
-        access_level = "1"
-        if identifier is not None and password == "1111":
-            dispatcher.utter_message(response="utter_authenticated_successfully")
-            return [SlotSet("access_level", access_level), SlotSet("password","1111")]
-        else:
-            dispatcher.utter_message(response="utter_authentication_failure")
-            return[ SlotSet("password",None), SlotSet("identifier",None), SlotSet("access_level", "0")]
-        return []
+        if identifier is not None and password == "1111":            
+            userCode = VisualtimeApi.getIdentifier(identifier)
+            if userCode is not None:
+                dispatcher.utter_message(response="utter_authenticated_successfully")
+                return [SlotSet("access_idshow ", str(userCode)), SlotSet("password","TOKEN")]
+
+        dispatcher.utter_message(response="utter_authentication_failure")
+        return[SlotSet("password",None), SlotSet("identifier",None), SlotSet("access_id", None)]
+        #return []
 
 class DaysOff(Action):
     def name(self) -> Text:
@@ -43,17 +44,16 @@ class Holidays(Action):
         return "action_show_holidays"
     
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        identifier = tracker.get_slot("identifier")
-        if identifier is not None:
-            userCode = VisualtimeApi.getIdentifier(identifier)
-            result = "User not exist"
-            if userCode is not None:
-                result = VisualtimeApi.getHolidays(userCode)                
+        userCode = tracker.get_slot("access_id")
+        if userCode is not None:            
+            result = VisualtimeApi.getHolidays(userCode) 
+            if result is not None:
                 dispatcher.utter_message(text = result)
                 result = VisualtimeApi.getAccruals(userCode, "VAC")
-                if result is None:
-                    result = "No info found"
-            dispatcher.utter_message(text = result)
+                if result is None:                    
+                    dispatcher.utter_message(text = result)
+            else:
+                dispatcher.utter_message(text = "No info found")
         else:
             dispatcher.utter_message(response = "utter_authentication_failure")
         return[]
@@ -62,16 +62,13 @@ class Accruals(Action):
     def name(self) -> Text:
         return "action_show_accruals"
 
-    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        identifier = tracker.get_slot("identifier")
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:        
+        userCode = tracker.get_slot("access_id")
         accrual = next(tracker.get_latest_entity_values("accruals"), None)
-        if identifier is not None:
-            userCode = VisualtimeApi.getIdentifier(identifier)
-            result = "User not exist"
-            if userCode is not None:
-                result = VisualtimeApi.getAccruals(userCode, accrual)
-                if result is None:                    
-                    result = "No info found"
+        if userCode is not None:            
+            result = VisualtimeApi.getAccruals(userCode, accrual)
+            if result is None:                    
+                result = "No info found"
             dispatcher.utter_message(text = result)
         else:
             dispatcher.utter_message(response = "utter_authentication_failure")
@@ -81,7 +78,7 @@ class ClearLogin(Action):
         return "action_clear_login"
         
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        return[ SlotSet("password",None), SlotSet("identifier",None), SlotSet("access_level", "0")]
+        return[SlotSet("password",None), SlotSet("identifier",None), SlotSet("access_id", None)]
         
     
 '''        

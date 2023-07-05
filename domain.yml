@@ -29,12 +29,12 @@ forms:
     - password
 
 slots:
-  access_level:
+  access_id:
     type: text
     influence_conversation: true
-    initial_value: 0
     mappings:
     - type: custom
+  
   identifier:
     type: text
     initial_value: null
@@ -85,13 +85,13 @@ responses:
   - text: Thank you for providing information, I have authenticated you sucessfully.
   utter_authentication_failure:
   - text: Sorry, I wasn't able to authenticate you. Please check if your provided information is correct or not.
-  utter_access_level:
+  utter_access_id:
   - condition:
     - type: slot
       name: identifier
       value: null
-    text: Your current access level is {access_level}
-  - text: Hey {identifier}, your current access level is {access_level}
+    text: You are not registered
+  - text: Hey {identifier}, your current access id is {access_id}
   utter_thanks:
   - text: You are welcome
   - text: I'm happy to help

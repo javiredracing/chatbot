@@ -37,7 +37,7 @@ rules:
 - rule: Get access level
   steps:
   - intent: access_level
-  - action: utter_access_level
+  - action: utter_access_id
 
 - rule: Handle out of scope requests
   steps:
