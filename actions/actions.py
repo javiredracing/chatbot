@@ -24,7 +24,7 @@ class AuthenticatedAction(Action):
             userCode = VisualtimeApi.getIdentifier(identifier)
             if userCode is not None:
                 dispatcher.utter_message(response="utter_authenticated_successfully")
-                return [SlotSet("access_idshow ", str(userCode)), SlotSet("password","TOKEN")]
+                return [SlotSet("access_id", userCode), SlotSet("password","TOKEN")]
 
         dispatcher.utter_message(response="utter_authentication_failure")
         return[SlotSet("password",None), SlotSet("identifier",None), SlotSet("access_id", None)]

@@ -71,7 +71,7 @@ class VisualtimeApi:
         data_json = json.loads(contents)
         identifier = None
         for user in data_json["Value"]:
-            identifier = user["ID"]
+            identifier = str(user["ID"])
         return identifier
     
     @staticmethod     
