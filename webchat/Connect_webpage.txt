@@ -1,0 +1,36 @@
+List of webchats: https://forum.rasa.com/t/rasa-3-chatbot-integration-with-website/50193/2
+
+Note: If you are facing any issues, please check this post
+https://forum.rasa.com/t/rasa-webbot/41319/7?u=jiteshgaikwad
+
+Step1: Once you have your bot ready and then we can connect the bot with the webchat
+
+so add the below congfiguration in the credentials.yml file:
+socketio:
+  user_message_evt: user_uttered
+  bot_message_evt: bot_uttered
+  session_persistence: true
+you can read more about this in the link below:
+
+https://rasa.com/docs/rasa/connectors/your-own-website/#websocket-channel
+
+Step2: Now  let us start our bot using the below command:
+
+rasa run -m models --enable-api --cors "*" --debug
+
+Step3: Now you can see different api details for our rasa bot server
+ Now we can connect our bot to a webpage using the webchat script
+
+https://github.com/botfront/rasa-webchat
+
+now create a webpage and add the below code:
+
+copy the code from the above link and paste it in the body tag
+
+step4: Now change the socket url port number to our rasa server's port number
+
+Step5: Now let's test our bot
+
+Now you can see we got the response
+
+so we have succesfully connected our bot to a webpage

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="UTF-8">
+<title>Chatbot example</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="styles.css">
+
+<body>
+
+<div id="chat-container"></div>
+
+<script src="script.js"></script>
+
+<script>
+<!-- https://elysian01.github.io/Rasa-Chatbot-UI/ -->
+createChatBot(host = 'http://localhost:5005/webhooks/rest/webhook',
+botLogo = "./imgs/bot-logo2.png ",
+title = "Covid BOT ", welcomeMessage = "Hey, i am Covid Bot ",
+inactiveMsg = "Server is down, Please contact the developer to activate it ",
+theme="blue ")
+</script>
+
+</body>
+
+</html>

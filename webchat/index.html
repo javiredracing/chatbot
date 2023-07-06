@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="UTF-8">
+<title>Chatbot example</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+html,body {font-family:"Verdana",sans-serif}
+h1,h2,h3,h4,h5,h6 {font-family:"Segoe UI",sans-serif}
+</style>
+
+<body>
+	<!--uncomment socketio in credentials.yml -->
+	<!--enable api: rasa run --cors "*" -->
+	<div id="rasa-chat-widget" data-websocket-url="http://localhost:5005/socket.io"></div>
+	<script src="https://unpkg.com/@rasahq/rasa-chat" type="application/javascript"></script>
+	<!-- DOC: https://chat-widget-docs.rasa.com/?path=/docs/rasa-chat-widget--widget -->
+</body>
+
+</html>
