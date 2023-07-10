@@ -23,7 +23,8 @@ class VisualtimeApi:
             for day in days["PublicHolidaysDetails"]:
                 datetime1 = datetime.datetime.strptime(day["PublicHolidayDate"]["Data"].split(" ")[0], '%Y-%m-%d').strftime('%A, %d %B %Y')
                 x.add_row([day["Description"], datetime1, title])                          
-        return x.get_string()
+        #return x.get_string()
+        return x.get_formatted_string("html")
         
     @staticmethod
     def getHolidays(employeeID, start_date = None, end_date = None):
@@ -60,7 +61,8 @@ class VisualtimeApi:
                 if current_date > today:
                     datetime1 = datetime1 + " *"
                 x.add_row([datetime1, day["ReasonName"]])
-            return x.get_string()    
+            #return x.get_string() 
+            return x.get_formatted_string("html")            
         else:
             return None
     
@@ -130,4 +132,5 @@ class VisualtimeApi:
         if empty_list:
             return None
         else:
-            return x.get_string()
+            #return x.get_string()
+            return x.get_formatted_string("html")

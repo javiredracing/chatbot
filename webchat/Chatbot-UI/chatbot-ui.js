@@ -2,7 +2,7 @@
 Makes backend API call to rasa chatbot and display output to chatbot frontend
 */
 
-function init(botLogoPath) {
+function init() {
 
     //---------------------------- Including Jquery ------------------------------
 
@@ -11,13 +11,20 @@ function init(botLogoPath) {
     script.type = 'text/javascript';
     document.getElementsByTagName('head')[0].appendChild(script);
 
+	//----------------------------------Including socketIO--------------------------------------------
+	/*script = document.createElement('script');
+    script.src = 'https://cdn.socket.io/4.5.4/socket.io.min.js';
+    script.type = 'text/javascript';
+    document.getElementsByTagName('head')[0].appendChild(script);*/
+
+
     //--------------------------- Important Variables----------------------------
-    // botLogoPath = "./imgs/bot-logo.png"
+    botLogoPath = "./imgs/bot-logo.png"
 
     //--------------------------- Chatbot Frontend -------------------------------
     const chatContainer = document.getElementById("chat-container");
 
-    template = ` <button class='chat-btn'><img src = "./icons/comment.png" class = "material-icon" ></button>
+    template = ` <button class='chat-btn'><img src = "./icons/comment.png" class = "icon" ></button>
 
     <div class='chat-popup'>
     
@@ -25,8 +32,8 @@ function init(botLogoPath) {
 			<div class='chatbot-img'>
 				<img src='${botLogoPath}' alt='Chat Bot image' class='bot-img'> 
 			</div>
-			<h3 class='bot-title'>Covid Bot</h3>
-			<button class = "expand-chat-window" ><img src="./icons/open_fullscreen.png" class="material-icon" ></button>
+			<h3 class='bot-title'>ITER Bot</h3>
+			<button class = "expand-chat-window" ><img src="./icons/open_fullscreen.png" class="icon" ></button>
 		</div>
 
 		<div class='chat-area'>
@@ -34,6 +41,13 @@ function init(botLogoPath) {
                 <img class='bot-img' src ='${botLogoPath}' />
 				<span class='msg'>Hi, How can i help you?</span>
 			</div>
+
+            <!-- <div class='bot-msg'>
+                <img class='bot-img' src ='${botLogoPath}' />
+                <div class='response-btns'>
+                    <button class='btn-primary' onclick= 'userResponseBtn(this)' value='/sign_in'>sample btn</button>            
+                </div>
+			</div> -->
 
 			<!-- <div class='bot-msg'>
 				<img class='msg-image' src = "https://i.imgur.com/nGF1K8f.jpg" />
@@ -53,6 +67,7 @@ function init(botLogoPath) {
 		</div>
 
 	</div>`
+
 
     chatContainer.innerHTML = template;
 
@@ -80,10 +95,10 @@ function init(botLogoPath) {
         if (chatPopup.style.display == "none" && mobileDevice) {
             chatPopup.style.display = "flex"
             chatInput.focus();
-            chatBtn.innerHTML = `<img src = "./icons/close.png" class = "material-icon" >`
+            chatBtn.innerHTML = `<img src = "./icons/close.png" class = "icon" >`
         } else if (mobileDevice) {
             chatPopup.style.display = "none"
-            chatBtn.innerHTML = `<img src = "./icons/comment.png" class = "material-icon" >`
+            chatBtn.innerHTML = `<img src = "./icons/comment.png" class = "icon" >`
         } else {
             mobileView()
         }
@@ -94,30 +109,37 @@ function init(botLogoPath) {
         if (userResponse !== "") {
             setUserResponse();
             send(userResponse)
+			
         }
     })
 
     expandWindow.addEventListener("click", (e) => {
         // console.log(expandWindow.innerHTML)
-        if (expandWindow.innerHTML == '<img src="./icons/open_fullscreen.png" class="material-icon">') {
-            expandWindow.innerHTML = `<img src = "./icons/close_fullscreen.png" class = 'material-icon'>`
+        if (expandWindow.innerHTML == '<img src="./icons/open_fullscreen.png" class="icon">') {
+            expandWindow.innerHTML = `<img src = "./icons/close_fullscreen.png" class = 'icon'>`
             root.style.setProperty('--chat-window-height', 80 + "%");
             root.style.setProperty('--chat-window-total-width', 85 + "%");
-            chatHeader.style.width = "100%";
-        } else if (expandWindow.innerHTML == '<img src="./icons/close.png" class="material-icon">') {
+        } else if (expandWindow.innerHTML == '<img src="./icons/close.png" class="icon">') {
             chatPopup.style.display = "none"
             chatBtn.style.display = "block"
         } else {
-            expandWindow.innerHTML = `<img src = "./icons/open_fullscreen.png" class = "material-icon" >`
+            expandWindow.innerHTML = `<img src = "./icons/open_fullscreen.png" class = "icon" >`
             root.style.setProperty('--chat-window-height', 500 + "px");
             root.style.setProperty('--chat-window-total-width', 380 + "px");
         }
 
     })
-
-
 }
 
+// end of init function
+
+
+
+var passwordInput = false;
+
+function userResponseBtn(e) {
+    send(e.value);
+}
 
 // to submit user input when he presses enter
 function givenUserInput(e) {
@@ -133,9 +155,16 @@ function givenUserInput(e) {
 // to display user message on UI
 function setUserResponse() {
     let userInput = chatInput.value;
-    let temp = `<div class="user-msg"><span class = "msg">${userInput}</span></div>`
-    chatArea.innerHTML += temp;
-    chatInput.value = ""
+    if (passwordInput) {
+        userInput = "******"
+    }
+    if (userInput) {
+        let temp = `<div class="user-msg"><span class = "msg">${userInput}</span></div>`
+        chatArea.innerHTML += temp;
+        chatInput.value = ""
+    } else {
+        chatInput.disabled = false;
+    }
     scrollToBottomOfResults();
 }
 
@@ -148,31 +177,15 @@ function scrollToBottomOfResults() {
 /***************************************************************
 Frontend Part Completed
 ****************************************************************/
-
-// host = 'http://localhost:5005/webhooks/rest/webhook'
+// host socket: http://localhost:5005/socket.io
 function send(message) {
-    chatInput.focus();
-    console.log("User Message:", message)
-    $.ajax({
-        url: host,
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify({
-            "message": message,
-            "sender": "User"
-        }),
-        success: function(data, textStatus) {
-            if (data != null) {
-                setBotResponse(data);
-            }
-            console.log("Rasa Response: ", data, "\n Status:", textStatus)
-        },
-        error: function(errorMessage) {
-            setBotResponse("");
-            console.log('Error' + errorMessage);
-
-        }
-    });
+    chatInput.type = "text"
+    passwordInput = false;
+    chatInput.focus();    
+	socket.emit('user_uttered', {
+		'message': message,
+		'session_id': getSessionId(),
+	});
     chatInput.focus();
 }
 
@@ -192,31 +205,62 @@ function setBotResponse(val) {
 
         } else {
             //if we get response from Rasa
-            for (i = 0; i < val.length; i++) {
+            //for (i = 0; i < val.length; i++) {
                 //check if there is text message
-                if (val[i].hasOwnProperty("text")) {
-                    var BotResponse = `<div class='bot-msg'><img class='bot-img' src ='${botLogoPath}' /><span class='msg'>${val[i].text}</span></div>`;
+                if (val.hasOwnProperty("text")) {
+                    const botMsg = val.text;
+                    if (botMsg.includes("password")) {
+                        chatInput.type = "password";
+                        passwordInput = true;
+                    }
+                    var BotResponse = `<div class='bot-msg'><img class='bot-img' src ='${botLogoPath}' /><span class='msg'>${val.text}</span></div>`;
                     $(BotResponse).appendTo('.chat-area').hide().fadeIn(1000);
                 }
 
                 //check if there is image
-                if (val[i].hasOwnProperty("image")) {
+                if (val.hasOwnProperty("image")) {
                     var BotResponse = "<div class='bot-msg'>" + "<img class='bot-img' src ='${botLogoPath}' />"
-                    '<img class="msg-image" src="' + val[i].image + '">' +
+                    '<img class="msg-image" src="' + val.image + '">' +
                         '</div>'
                     $(BotResponse).appendTo('.chat-area').hide().fadeIn(1000);
                 }
 
+                //check if there are buttons
+                if (val.hasOwnProperty("buttons")) {
+                    var BotResponse = `<div class='bot-msg'><img class='bot-img' src ='${botLogoPath}' /><div class='response-btns'>`
+
+                    buttonsArray = val.buttons;
+                    buttonsArray.forEach(btn => {
+                        BotResponse += `<button class='btn-primary' onclick= 'userResponseBtn(this)' value='${btn.payload}'>${btn.title}</button>`
+                    })
+
+                    BotResponse += "</div></div>"
+
+                    $(BotResponse).appendTo('.chat-area').hide().fadeIn(1000);
+                    chatInput.disabled = true;
+                }
+
             }
             scrollToBottomOfResults();
+            chatInput.disabled = false;
             chatInput.focus();
-        }
+        //}
 
     }, 500);
 }
 
-
-
+/*****/
+function getSessionId() {
+	const storage = localStorage;
+	const storageKey = 'RASA_SESSION_ID';
+	const savedId = storage.getItem(storageKey);
+	if (savedId) {
+		return savedId;
+	}
+	const newId = socket.id;
+	storage.setItem(storageKey, newId);
+	return newId;
+}
 
 function mobileView() {
     $('.chat-popup').width($(window).width());
@@ -228,7 +272,7 @@ function mobileView() {
         chatPopup.style.bottom = "0"
         chatPopup.style.right = "0"
             // chatPopup.style.transition = "none"
-        expandWindow.innerHTML = `<img src = "./icons/close.png" class = "material-icon" >`
+        expandWindow.innerHTML = `<img src = "./icons/close.png" class = "icon" >`
     }
 }
 
@@ -248,8 +292,6 @@ function chatbotTheme(theme) {
         background: "linear-gradient(19deg, #21D4FD 0%, #B721FF 100%)"
     }
 
-
-
     if (theme === "orange") {
         root.style.setProperty('--chat-window-color-theme', orange.color);
         gradientHeader.style.backgroundImage = orange.background;
@@ -261,12 +303,11 @@ function chatbotTheme(theme) {
     }
 }
 
-function createChatBot(hostURL, botLogo, title, welcomeMessage, inactiveMsg, theme = "blue") {
+function createChatBot(botLogo, title, welcomeMessage, inactiveMsg, theme = "blue") {
 
-    host = hostURL;
     botLogoPath = botLogo;
     inactiveMessage = inactiveMsg;
-    init(botLogoPath)
+    init()
     const msg = document.querySelector(".msg");
     msg.innerText = welcomeMessage;
 
@@ -275,3 +316,31 @@ function createChatBot(hostURL, botLogo, title, welcomeMessage, inactiveMsg, the
 
     chatbotTheme(theme)
 }
+//var path = "socket.io"
+const socketUrl = "http://localhost:5005"
+//const options = path ? { path } : {};
+const socket = io(socketUrl/*, options*/);
+
+//console.log(socket);
+
+socket.on("disconnect", () => {
+  //console.log(socket.id); 
+});
+
+socket.on('connect', function () {
+	//console.log('Connected to Socket.io server.');
+	socket.emit('session_request', {
+		'session_id': getSessionId(),
+	});
+	//console.log(`Session ID: ${getSessionId()}`);
+});
+
+socket.on('connect_error', (error) => {
+	// Write any connection errors to the console 
+	console.error(error);
+});
+
+socket.on('bot_uttered', function (response) {
+	//console.log('Bot uttered:', response);
+	setBotResponse(response);
+});
