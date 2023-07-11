@@ -17,7 +17,6 @@ intents:
 - show_days_off
 - show_holidays
 - thanks
-- username
 
 entities:
 - accruals

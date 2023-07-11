@@ -50,7 +50,7 @@ class Holidays(Action):
             if result is not None:
                 dispatcher.utter_message(text = result)
                 result = VisualtimeApi.getAccruals(userCode, "VAC")
-                if result is None:                    
+                if result is not None:                    
                     dispatcher.utter_message(text = result)
             else:
                 dispatcher.utter_message(text = "No info found")

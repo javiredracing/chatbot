@@ -163,7 +163,3 @@ nlu:
     - I want to try again
     - retry
 
-- intent: username
-  examples: |
-    - jfernandez
-    - mrodriguez

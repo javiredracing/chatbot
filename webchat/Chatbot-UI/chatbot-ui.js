@@ -11,13 +11,6 @@ function init() {
     script.type = 'text/javascript';
     document.getElementsByTagName('head')[0].appendChild(script);
 
-	//----------------------------------Including socketIO--------------------------------------------
-	/*script = document.createElement('script');
-    script.src = 'https://cdn.socket.io/4.5.4/socket.io.min.js';
-    script.type = 'text/javascript';
-    document.getElementsByTagName('head')[0].appendChild(script);*/
-
-
     //--------------------------- Important Variables----------------------------
     botLogoPath = "./imgs/bot-logo.png"
 
@@ -205,46 +198,44 @@ function setBotResponse(val) {
 
         } else {
             //if we get response from Rasa
-            //for (i = 0; i < val.length; i++) {
-                //check if there is text message
-                if (val.hasOwnProperty("text")) {
-                    const botMsg = val.text;
-                    if (botMsg.includes("password")) {
-                        chatInput.type = "password";
-                        passwordInput = true;
-                    }
-                    var BotResponse = `<div class='bot-msg'><img class='bot-img' src ='${botLogoPath}' /><span class='msg'>${val.text}</span></div>`;
-                    $(BotResponse).appendTo('.chat-area').hide().fadeIn(1000);
-                }
+			//check if there is text message
+			if (val.hasOwnProperty("text")) {
+				const botMsg = val.text;
+				if (botMsg.includes("password")) {
+					chatInput.type = "password";
+					passwordInput = true;
+				}
+				var BotResponse = `<div class='bot-msg'><img class='bot-img' src ='${botLogoPath}' /><span class='msg'>${val.text}</span></div>`;
+				$(BotResponse).appendTo('.chat-area').hide().fadeIn(1000);
+			}
 
-                //check if there is image
-                if (val.hasOwnProperty("image")) {
-                    var BotResponse = "<div class='bot-msg'>" + "<img class='bot-img' src ='${botLogoPath}' />"
-                    '<img class="msg-image" src="' + val.image + '">' +
-                        '</div>'
-                    $(BotResponse).appendTo('.chat-area').hide().fadeIn(1000);
-                }
+			//check if there is image
+			if (val.hasOwnProperty("image")) {
+				var BotResponse = "<div class='bot-msg'>" + "<img class='bot-img' src ='${botLogoPath}' />"
+				'<img class="msg-image" src="' + val.image + '">' +
+					'</div>'
+				$(BotResponse).appendTo('.chat-area').hide().fadeIn(1000);
+			}
 
-                //check if there are buttons
-                if (val.hasOwnProperty("buttons")) {
-                    var BotResponse = `<div class='bot-msg'><img class='bot-img' src ='${botLogoPath}' /><div class='response-btns'>`
+			//check if there are buttons
+			if (val.hasOwnProperty("buttons")) {
+				var BotResponse = `<div class='bot-msg'><img class='bot-img' src ='${botLogoPath}' /><div class='response-btns'>`
 
-                    buttonsArray = val.buttons;
-                    buttonsArray.forEach(btn => {
-                        BotResponse += `<button class='btn-primary' onclick= 'userResponseBtn(this)' value='${btn.payload}'>${btn.title}</button>`
-                    })
+				buttonsArray = val.buttons;
+				buttonsArray.forEach(btn => {
+					BotResponse += `<button class='btn-primary' onclick= 'userResponseBtn(this)' value='${btn.payload}'>${btn.title}</button>`
+				})
 
-                    BotResponse += "</div></div>"
+				BotResponse += "</div></div>"
 
-                    $(BotResponse).appendTo('.chat-area').hide().fadeIn(1000);
-                    chatInput.disabled = true;
-                }
+				$(BotResponse).appendTo('.chat-area').hide().fadeIn(1000);
+				chatInput.disabled = true;
+			}
 
-            }
-            scrollToBottomOfResults();
-            chatInput.disabled = false;
-            chatInput.focus();
-        //}
+		}
+		scrollToBottomOfResults();
+		chatInput.disabled = false;
+		chatInput.focus();
 
     }, 500);
 }
@@ -255,6 +246,7 @@ function getSessionId() {
 	const storageKey = 'RASA_SESSION_ID';
 	const savedId = storage.getItem(storageKey);
 	if (savedId) {
+		console.log(savedId);
 		return savedId;
 	}
 	const newId = socket.id;
@@ -286,6 +278,11 @@ function chatbotTheme(theme) {
         color: "#FBAB7E",
         background: "linear-gradient(19deg, #FBAB7E 0%, #F7CE68 100%)"
     }
+	
+	const iterColor = {
+        color: "#87b09a",
+        background: "linear-gradient(19deg, #6c7572 0%, #87b09a 100%)"
+    }
 
     const purple = {
         color: "#B721FF",
@@ -300,6 +297,10 @@ function chatbotTheme(theme) {
         root.style.setProperty('--chat-window-color-theme', purple.color);
         gradientHeader.style.backgroundImage = purple.background;
         chatSubmit.style.backgroundColor = purple.color;
+    } else if (theme === "iterColor") {
+        root.style.setProperty('--chat-window-color-theme', iterColor.color);
+        gradientHeader.style.backgroundImage = iterColor.background;
+        chatSubmit.style.backgroundColor = iterColor.color;
     }
 }
 
@@ -316,23 +317,24 @@ function createChatBot(botLogo, title, welcomeMessage, inactiveMsg, theme = "blu
 
     chatbotTheme(theme)
 }
-//var path = "socket.io"
+const path = "/socket.io/"
 const socketUrl = "http://localhost:5005"
-//const options = path ? { path } : {};
-const socket = io(socketUrl/*, options*/);
+const options = path ? { path } : {};
+const socket = io(socketUrl, options);
 
 //console.log(socket);
 
 socket.on("disconnect", () => {
-  //console.log(socket.id); 
+  //console.log(socket.id);
+	
 });
 
-socket.on('connect', function () {
-	//console.log('Connected to Socket.io server.');
+socket.on('connect', () =>{
+	console.log('Connected to Socket.io server.');
 	socket.emit('session_request', {
 		'session_id': getSessionId(),
 	});
-	//console.log(`Session ID: ${getSessionId()}`);
+	console.log(`Session ID: ${getSessionId()}`);
 });
 
 socket.on('connect_error', (error) => {
@@ -340,7 +342,7 @@ socket.on('connect_error', (error) => {
 	console.error(error);
 });
 
-socket.on('bot_uttered', function (response) {
-	//console.log('Bot uttered:', response);
+socket.on('bot_uttered',  (response) =>{
+	console.log('Bot uttered:', response);
 	setBotResponse(response);
 });

@@ -10,6 +10,7 @@ class VisualtimeApi:
     URL = URI + "/ScheduleService.svc/"
     URL_EMPLOYEE = URI + "/EmployeeService.svc/"
     URL_ACCRUALS = URI + "/AccrualsService.svc/"
+    URL_PUNCHES = URI + "/PunchesService.svc/"
     
     @staticmethod
     def getPublicHolidays():
@@ -55,14 +56,23 @@ class VisualtimeApi:
             x = PrettyTable()
             x.title = "Holidays planned between "+ date1.strftime("%d/%m/%Y")  + " and " + date2.strftime("%d/%m/%Y")
             x.field_names = ["Fecha", "Motivo"]
-            for day in data_json["Value"]:
+
+            finded = False
+            for index, day in enumerate(data_json["Value"]):
+                divider = False
+                #set divider: check if next day is upper than today
+                if(index<(len(data_json["Value"])-1)) and not finded:  
+                    nextDay = data_json["Value"][index + 1]
+                    nextDay_date = datetime.datetime.strptime(nextDay["PlannedDate"]["Data"].split(" ")[0], '%Y-%m-%d')
+                    divider = nextDay_date > today
+                    finded = divider
                 current_date = datetime.datetime.strptime(day["PlannedDate"]["Data"].split(" ")[0], '%Y-%m-%d')
                 datetime1 = current_date.strftime('%A, %d %B %Y')
-                if current_date > today:
-                    datetime1 = datetime1 + " *"
-                x.add_row([datetime1, day["ReasonName"]])
+
+                x.add_row([datetime1, day["ReasonName"]], divider=divider)
+            
             #return x.get_string() 
-            return x.get_formatted_string("html")            
+            return x.get_html_string()          
         else:
             return None
     
@@ -134,3 +144,72 @@ class VisualtimeApi:
         else:
             #return x.get_string()
             return x.get_formatted_string("html")
+            
+    @staticmethod     
+    def getSignings(employeeID, start_date = None, end_date = None):
+        
+        # date1 = datetime.datetime.strptime(start_date, '%d/%m/%Y')     
+        # date2 = datetime.datetime.strptime(end_date, '%d/%m/%Y')
+        # if date1 > date2:
+            # tmp = start_date
+            # start_date = end_date
+            # end_date = tmp
+    
+               
+        if end_date is None :           
+            if start_date is None:     
+                today = datetime.datetime.now() 
+                t = datetime.datetime(today.year, today.month, today.day, 0, 0)
+                start_date = t.strftime("%Y-%m-%d %H:%M:%S") 
+                t = datetime.datetime(today.year, today.month, today.day, 23, 59)
+                end_date = t.strftime("%Y-%m-%d %H:%M:%S") 
+            else:
+                #parse start_date
+                datetime_object = datetime.datetime.strptime(start_date, '%d/%m/%Y')
+                t = datetime.datetime(datetime_object.year, datetime_object.month, datetime_object.day, 0,0)
+                start_date = t.strftime("%Y-%m-%d %H:%M:%S") 
+                t = datetime.datetime(datetime_object.year, datetime_object.month, datetime_object.day, 23,59)
+                end_date = t.strftime("%Y-%m-%d %H:%M:%S") 
+        else:
+            if start_date is None:            
+                datetime_object = datetime.datetime.strptime(end_date, '%d/%m/%Y')
+                t = datetime.datetime(datetime_object.year, datetime_object.month, datetime_object.day, 0,0)
+                start_date = t.strftime("%Y-%m-%d %H:%M:%S") 
+            else:
+                start_date = start_date + " 00:00:00"     
+            end_date = end_date + " 23:59:50"     
+        
+        date1 = datetime.datetime.strptime(start_date, '%Y-%m-%d %H:%M:%S')     
+        date2 = datetime.datetime.strptime(end_date, '%Y-%m-%d %H:%M:%S')
+                           
+        offset = " +01"  #winter time
+        if time.localtime().tm_isdst > 0:
+            offset = " +02"     #summer time
+        start_date = urllib.parse.quote(start_date + offset)
+        end_date = urllib.parse.quote(end_date + offset)
+        contents = urllib.request.urlopen(VisualtimeApi.URL_PUNCHES + "GetAccrualsAtDate?Token=" + VisualtimeApi.TOKEN + "&StartDate=" + start_date + "&EndDate=" + end_date + "&Employee=" + employeeID).read()
+        data_json = json.loads(contents)
+        x = PrettyTable()
+        x.title = "Signings between "+ date1.strftime("%d/%m/%Y")  + " and " + date2.strftime("%d/%m/%Y")
+        mycolum = []
+        current_date = None
+        for sign in data_json["Value"]:
+            split = sign["DateTime"]["Data"].split(" ")
+            signType = sign["Type"] #TODO check E/S
+            mySignDay = split[0]
+            mySignHours =  split[1]
+            date_object = datetime.datetime.strptime(mySignDay, '%Y-%m-%d')
+            date_title = date_object.strftime("%a,%d/%m/%Y").
+            if current_date is None:
+                current_date = date_title
+            if date_title != current_date:                
+                x.add_column(current_date, mycolum) 
+                mycolum = []
+                current_date = date_title                
+            mycolum.append(mySignHours)
+
+        if len(mycolum)> 0:
+            x.add_column(current_date, mycolum)
+                
+        #https://vtliveapi.visualtime.net/api/v2/PunchesService.svc/GetPunchesBetweenDates?Token=YVhSbGNqUXhOemM9ODgwMDhhMDFlNjM3OTkxNTE1ODBmMmQzYWYxNzcxMDhmZjczNDljYzM4MzlmM2RmZDVlNTBkOWMyNzlhODQzNw%3D%3D&StartDate=2023-01-01%2007%3A30%3A00%20%2B01&EndDate=2023-02-07%2009%3A30%3A00%20%2B01&EmployeeID=457
+        return x.get_formatted_string("html")        
