@@ -57,3 +57,8 @@ stories:
   steps:
   - intent: show_accruals
   - action: action_show_accruals
+  
+- story: show signings
+  steps:
+  - intent: show_signings
+  - action: action_show_signings

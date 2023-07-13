@@ -12,6 +12,7 @@ from rasa_sdk.events import SlotSet, AllSlotsReset
 from rasa_sdk.executor import CollectingDispatcher
 
 from APIs.VisualtimeApi import *
+import dateparser
 
 class AuthenticatedAction(Action):
     def name(self) -> Text:
@@ -53,7 +54,7 @@ class Holidays(Action):
                 if result is not None:                    
                     dispatcher.utter_message(text = result)
             else:
-                dispatcher.utter_message(text = "No info found")
+                dispatcher.utter_message(text = "Información no disponible")
         else:
             dispatcher.utter_message(response = "utter_authentication_failure")
         return[]
@@ -68,10 +69,36 @@ class Accruals(Action):
         if userCode is not None:            
             result = VisualtimeApi.getAccruals(userCode, accrual)
             if result is None:                    
-                result = "No info found"
+                result = "Información no disponible"
             dispatcher.utter_message(text = result)
         else:
             dispatcher.utter_message(response = "utter_authentication_failure")
+
+        return[]
+
+class Signings(Action):
+    def name(self) -> Text:
+        return "action_show_signings"
+    
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        userCode = tracker.get_slot("access_id")
+        start_date = next(tracker.get_latest_entity_values("start_date"), None)
+        print(start_date)
+        end_date = next(tracker.get_latest_entity_values("end_date"), None)
+        print(end_date)
+        if start_date is not None:
+            start_date = dateparser.parse(start_date)
+        if end_date is not None:
+            end_date = dateparser.parse(end_date)
+        #print(start_date)
+        if userCode is not None:
+            result = VisualtimeApi.getSignings(userCode, start_date, end_date)
+            if result is None:                    
+                result = "Información no disponible"
+            dispatcher.utter_message(text = result)
+        else:
+            dispatcher.utter_message(response = "utter_authentication_failure")
+        return[]
         
 class ClearLogin(Action): 
     def name(self) -> Text:
@@ -79,8 +106,8 @@ class ClearLogin(Action):
         
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         return[SlotSet("password",None), SlotSet("identifier",None), SlotSet("access_id", None)]
-        
-    
+
+           
 '''        
 class ValidateAuthFormAction(FormValidationAction):
     def name(self) -> Text:

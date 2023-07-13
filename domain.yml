@@ -16,10 +16,14 @@ intents:
 - show_accruals
 - show_days_off
 - show_holidays
+- show_signings
 - thanks
 
 entities:
 - accruals
+- start_date
+- end_date
+- range_date
 
 forms:
   auth_form:
@@ -60,56 +64,56 @@ slots:
 
 responses:
   utter_greet:
-  - text: Hey! How can i help you?
+  - text: Hey! ¿Como puedo ayudarte?
   utter_cheer_up:
-  - text: 'Here is something to cheer you up:'
+  - text: 'Aqui tengo algo que te va a ayudar'
     image: https://i.imgur.com/nGF1K8f.jpg
   utter_did_that_help:
-  - text: Did that help you?
+  - text: ¿Te ayudó?
   utter_happy:
-  - text: Great, carry on!
+  - text: Genial!
   utter_goodbye:
-  - text: Bye
+  - text: Adios!
   utter_show_help:
   - text: Esta es la información disponible -> Visualtime -> Saldos y fichajes.
   utter_show_help_detailed:
   - text: Puedes pedirme cuantos días de vacaciones te quedan, la bolsa de horas actual o los fichajes realizados en un día específico.
   utter_iamabot:
-  - text: I am a bot, powered by Rasa.
+  - text: Soy un bot, hecho por Rasa.
   utter_ask_auth_form_identifier:
-  - text: Can you please provide me your identifier?
+  - text: ¿Puedes introducir tu identificador?
   utter_ask_auth_form_password:
-  - text: Thank you {identifier} for providing identifier, can you please put your password?
+  - text: Gracias {identifier}, puedes introducir tu password?
   utter_authenticated_successfully:
-  - text: Thank you for providing information, I have authenticated you sucessfully.
+  - text: Gracias por proporcinar tus credenciales, has sido autenticado con éxito.
   utter_authentication_failure:
-  - text: Sorry, I wasn't able to authenticate you. Please check if your provided information is correct or not.
+  - text: Lo siento, no pude autenticarte. Por favor, revisa tus credenciales
   utter_access_id:
   - condition:
     - type: slot
       name: identifier
       value: null
-    text: You are not registered
-  - text: Hey {identifier}, your current access id is {access_id}
+    text: No estas autenticado
+  - text: Hey {identifier}, estas autenticado con el identificador {access_id}
   utter_thanks:
-  - text: You are welcome
-  - text: I'm happy to help
-  - text: You got it.
-  - text: Don't mention it.
-  - text: No worries.
-  - text: Not a problem.
-  - text: My pleasure.
-  - text: It was nothing.
-  - text: I'm happy to help.
-  - text: Not at all.
+  - text: De nada
+  - text: Encantado de ayudar
+  - text: No hay de qué.
+  - text: No es nada.
+  - text: No te preocupes.
+  - text: Sin problema.
+  - text: Un placer.
+  - text: No fue nada.
+  - text: Feliz de ayudar.
+  - text: No fue nada.
   utter_out_of_scope:
-  - text: I don't understand what you're asking.
+  - text: No entiendo lo que estas pidiendo
   utter_please_rephrase:
-  - text: I didn't quite understand that. Could you please rephrase?
+  - text: No lo entiendo. ¿Puedes reescribirlo?
   utter_retry:
-  - text: Do you want to log in again?
+  - text: Quieres autenticarte de nuevo?
   utter_default:
-  - text: I didn't quite understand that. Do ask another question.
+  - text: No lo entiendo, hazme otra pregunta.
 
 session_config:
   session_expiration_time: 60
@@ -120,6 +124,7 @@ actions:
 - action_authenticated
 - action_clear_login
 - action_show_holidays
+- action_show_signings
 - utter_show_help
 - utter_retry
 - utter_greet
