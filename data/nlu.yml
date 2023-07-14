@@ -5,161 +5,192 @@ nlu:
     - hey
     - hello
     - hi
-    - hello there
-    - good morning
-    - good evening
-    - moin
-    - hey there
-    - let's go
-    - hey dude
-    - goodmorning
-    - goodevening
-    - good afternoon
+    - buenos dias
+    - buenas tardes
+    - Buenas
+    - Vamos
+    - hey colega
+    - Buenas noches
     - hola
+    - hay alguien ahí?
+    - estas ahí?
+    - hay alguien?
+    - saludos
+    
 - intent: goodbye
   examples: |
-    - cu
-    - good by
+    - good bye
     - cee you later
-    - good night
     - bye
     - goodbye
     - have a nice day
-    - see you around
     - bye bye
     - see you later
     - ciao
     - adios
+    - hasta otra
+    - hasta luego
+    
 - intent: affirm
   examples: |
     - yes
     - y
-    - indeed
-    - of course
-    - that sounds good
-    - correct
+    - si
+    - por supuesto
+    - eso suena bien
+    - correcto
+    - conforme
+    - s
     - ok
 - intent: deny
   examples: |
     - no
     - n
-    - never
-    - I don't think so
-    - don't like that
-    - no way
-    - not really
+    - nunca
+    - No lo creo
+    - no me gusta
+    - de ninguna manera
+    - realmente no
 
 - intent: mood_great
   examples: |
-    - perfect
-    - great
+    - perfecto
+    - genial
     - amazing
-    - feeling like a king
-    - wonderful
-    - I am feeling very good
-    - I am great
-    - I am amazing
-    - I am going to save the world
-    - super stoked
-    - extremely good
-    - so so perfect
-    - so good
-    - so perfect
+    - me siento bien
+    - fantástico
+    - estoy muy bien
+    - extremadamente bien
+
 - intent: mood_unhappy
   examples: |
-    - my day was horrible
-    - I am sad
-    - I don't feel very well
-    - I am disappointed
-    - super sad
-    - I'm so sad
-    - sad
+    - mi día es horrible
+    - Estoy triste
+    - No me siento bien
+    - Estoy decepcionado
+    - super triste
+    - Estoy tan triste
+    - triste
     - very sad
-    - unhappy
-    - not good
-    - not very good
-    - extremly sad
-    - so saad
-    - so sad
+    - infeliz
+    - no bien
+    - no muy bien
+    - extremadamente triste
+    - muy mal
+    - tan mal
 - intent: bot_challenge
   examples: |
-    - are you a bot?
-    - are you a human?
-    - am I talking to a bot?
-    - am I talking to a human?
+    - Eres un bot?
+    - Eres un humano?
+    - Estoy hablando con un bot?
+    - Estoy hablando con un humano?
+    - Estoy hablando con una persona?
+    - Eres una persona?
 - intent: authentication
   examples: |
-    - can you please make me login
-    - how do I login?
-    - can you autheticate me
+    - Puedes loguearme?
+    - Cómo me logueo?
+    - Puedes autentificarme?
     - login
-    - authenticate
+    - autenticar
     - log me in
+    - puedes autentificarme?
+    - autenticación
 - intent: access_level
   examples: |
-    - show access level
-    - access level
+    - nivel de acceso 
+    - muestrame mi nivel de acceso
+    - muestrame mis credenciales
+    - muestrame mi registro
+    - credenciales
+    - acceso
 - intent: thanks
   examples: |
-    - thanks
+    - gracias
     - thank you
-    - Thanks a lot
+    - Thanks
+    - muchas gracias
 - intent: help
   examples: |
-    - I need help
+    - Necesito ayuda
     - help
-    - Can you help me?
-    - What can you do?
-    - What can you do for me?
-    - Show me what can you do
-    - I need more help
-    - I dont know
-    - i'm lost
-    - i'm confused
-    - i need assistance
+    - ayuda
+    - Puedes ayudarme?
+    - Que puedes hacer?
+    - Que puedes hacer por mi?
+    - Muestrame que puedes hacer
+    - Necesito mas ayuda
+    - No se que hacer
+    - Estoy perdido
+    - Estoy confuso
+    - necesito asistencia
+    - muestrame la ayuda
 - intent: out_of_scope
   examples: |
-    - what is the weather?
-    - how is the weather in New York
-    - what's for dinner?
-    - tell me about insurance?
-    - what's my coverage?
-    - what am i covered for?
+    - Que tiempo hace?
+    - Como es el tiempo en New York
+    - Qué hay para cenar?
+    - Háblame de algo
+    - Dime algo
+    
 - intent: nlu_fallback
   examples: |
-    - tell me how to change a tire
-    - something totally random
-    - i don't want insurance
+    - dime como cambiar una rueda
+    - dime algo aleatorio
+    - no quiero un seguro
 - intent: show_days_off
   examples: |
-    - Show my days off
-    - Can you show me the days off?
-    - Show me free days
-    - days off
-    - show me my days off
-    - show my days off
+    - Muestrame mis dias libres
+    - puedes mostrarme mis dias libres
+    - dime cuales son los festivos
+    - dias festivos
+    - muestrame los dias festivos
+    - cuando son los festivos?
+    - cuando son los dias festivos?
+    - cuantos dias festivos tengo?
+    - cuales son mis dias festivos?
     
 - intent: show_holidays
   examples: |
-    - Show my holidays
-    - Can you show me my holidays?
-    - Current holidays
-    - holidays
-    - How many holidays i spent?
-    - Holidays spent
+    - Muestrame mis vacaciones
+    - puedes mostrarme mis vacaciones?
+    - vacaciones
+    - vacaciones actuales
+    - Asuntos propios
+    - cuantos dias de vacaciones me quedan?
+    - cuantos dias de vacaciones tengo?
+    - asuntos propios restantes
+    - cuantos asuntos propios me quedan?
     
 - intent: show_accruals
   examples:  |
-    - show my accruals
-    - show my [bolsa de horas]{"entity": "accruals", "value": "BHS"}
+    - muestrame mis saldos
+    - enseñame mis saldos
+    - saldos
+    - enseñame mi [bolsa de horas]{"entity": "accruals", "value": "BHS"}
     - [bolsa de horas]{"entity": "accruals", "value": "BHS"}
     - [lactancia]{"entity": "accruals", "value": "LAC"}
-    - Show my [lactancia]{"entity": "accruals", "value": "LAC"}
-    - Show my [horas sindicales]{"entity": "accruals", "value": "HSM"}
+    - Enseñame mi saldo de [lactancia]{"entity": "accruals", "value": "LAC"}
+    - Cuantas [horas sindicales]{"entity": "accruals", "value": "HSM"} me quedan?
+    - Cuales son mis [horas sindicales]{"entity": "accruals", "value": "HSM"}?
     - [Horas sindicales]{"entity": "accruals", "value": "HSM"}
-    
+
+- intent: show_signings
+  examples: |
+    - Enseñame mis fichajes
+    - dime mis fichajes
+    - fichajes
+    - fichajes de hoy
+    - enseñame mis fichajes de [hoy](start_date)
+    - dime mis fichajes de [hoy](start_date)
+    - dime mis fichajes de [la semana pasada](range_date)
+    - dime mis fichajes de [el mes pasado](range_date)
+    - muestrame mis fichajes desde el [11/12/2020](start_date) hasta [hoy](end_date)
+    - dime mis fichajes desde [el 12-4-2022](start_date) hasta el [11-5-2022](end_date)
+
 - intent: retry
   examples: |
-    - I want to try again
-    - retry
+    - Quiero volver a hacerlo
+    - Quiero reintentarlo
+    - reintentar
 

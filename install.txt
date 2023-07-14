@@ -1,0 +1,6 @@
+installing spacy:
+pip3 install rasa[spacy]
+python -m spacy download es_core_news_sm
+if error: https://github.com/explosion/spaCy/issues/12659 -> downgrade : pip install --force-reinstall -v "typing-extensions==4.5.0"
+
+install prettytable

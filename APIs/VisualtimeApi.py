@@ -3,6 +3,7 @@ import urllib.parse
 import json
 from prettytable import PrettyTable
 import datetime
+import time
 
 class VisualtimeApi:
     TOKEN = "YVhSbGNqUXhOemM9ODgwMDhhMDFlNjM3OTkxNTE1ODBmMmQzYWYxNzcxMDhmZjczNDljYzM4MzlmM2RmZDVlNTBkOWMyNzlhODQzNw%3D%3D"
@@ -94,7 +95,7 @@ class VisualtimeApi:
         contents = urllib.request.urlopen(VisualtimeApi.URL_ACCRUALS + "GetAccrualsAtDate?Token=" + VisualtimeApi.TOKEN + "&AtDate=" + atDate + "&Employee=" + employeeID).read()
         data_json = json.loads(contents)
         x = PrettyTable()
-        x.title = "Current accruals at " + now.strftime("%d/%m/%Y")
+        x.title = "Saldos actuales " + now.strftime("%d/%m/%Y")
         empty_list = True
         for accrual in data_json["Value"]:
             if accrual["AccrualShortName"] == "Vpe" and (params == "VAC" or params is None):
@@ -148,68 +149,56 @@ class VisualtimeApi:
     @staticmethod     
     def getSignings(employeeID, start_date = None, end_date = None):
         
-        # date1 = datetime.datetime.strptime(start_date, '%d/%m/%Y')     
-        # date2 = datetime.datetime.strptime(end_date, '%d/%m/%Y')
         # if date1 > date2:
             # tmp = start_date
             # start_date = end_date
-            # end_date = tmp
-    
-               
+            # end_date = tmp                   
         if end_date is None :           
             if start_date is None:     
                 today = datetime.datetime.now() 
-                t = datetime.datetime(today.year, today.month, today.day, 0, 0)
-                start_date = t.strftime("%Y-%m-%d %H:%M:%S") 
-                t = datetime.datetime(today.year, today.month, today.day, 23, 59)
-                end_date = t.strftime("%Y-%m-%d %H:%M:%S") 
+                start_date = datetime.datetime(today.year, today.month, today.day, 0, 0)
+                end_date = datetime.datetime(today.year, today.month, today.day, 23, 59)
             else:
-                #parse start_date
-                datetime_object = datetime.datetime.strptime(start_date, '%d/%m/%Y')
-                t = datetime.datetime(datetime_object.year, datetime_object.month, datetime_object.day, 0,0)
-                start_date = t.strftime("%Y-%m-%d %H:%M:%S") 
-                t = datetime.datetime(datetime_object.year, datetime_object.month, datetime_object.day, 23,59)
-                end_date = t.strftime("%Y-%m-%d %H:%M:%S") 
+                start_date = datetime.datetime(start_date.year, start_date.month, start_date.day, 0,0)
+                end_date = datetime.datetime(start_date.year, start_date.month, start_date.day, 23,59)
         else:
-            if start_date is None:            
-                datetime_object = datetime.datetime.strptime(end_date, '%d/%m/%Y')
-                t = datetime.datetime(datetime_object.year, datetime_object.month, datetime_object.day, 0,0)
-                start_date = t.strftime("%Y-%m-%d %H:%M:%S") 
+            if start_date is None:                            
+                start_date = datetime.datetime(end_date.year, end_date.month, end_date.day, 0,0)
             else:
-                start_date = start_date + " 00:00:00"     
-            end_date = end_date + " 23:59:50"     
+                start_date = datetime.datetime(start_date.year, start_date.month, start_date.day, 0,0)
+            end_date = datetime.datetime(end_date.year, end_date.month, end_date.day, 23,59)
         
-        date1 = datetime.datetime.strptime(start_date, '%Y-%m-%d %H:%M:%S')     
-        date2 = datetime.datetime.strptime(end_date, '%Y-%m-%d %H:%M:%S')
-                           
         offset = " +01"  #winter time
         if time.localtime().tm_isdst > 0:
             offset = " +02"     #summer time
-        start_date = urllib.parse.quote(start_date + offset)
-        end_date = urllib.parse.quote(end_date + offset)
-        contents = urllib.request.urlopen(VisualtimeApi.URL_PUNCHES + "GetAccrualsAtDate?Token=" + VisualtimeApi.TOKEN + "&StartDate=" + start_date + "&EndDate=" + end_date + "&Employee=" + employeeID).read()
+                    
+        date1 = start_date.strftime("%Y-%m-%d %H:%M:%S")        
+        date2 = end_date.strftime("%Y-%m-%d %H:%M:%S") 
+        start_date = urllib.parse.quote(date1 + offset)
+        end_date = urllib.parse.quote(date2 + offset)
+        contents = urllib.request.urlopen(VisualtimeApi.URL_PUNCHES + "GetPunchesBetweenDates?Token=" + VisualtimeApi.TOKEN + "&StartDate=" + start_date + "&EndDate=" + end_date + "&EmployeeID=" + employeeID).read()       
         data_json = json.loads(contents)
         x = PrettyTable()
-        x.title = "Signings between "+ date1.strftime("%d/%m/%Y")  + " and " + date2.strftime("%d/%m/%Y")
+        x.title = "Fichajes"       
         mycolum = []
         current_date = None
         for sign in data_json["Value"]:
-            split = sign["DateTime"]["Data"].split(" ")
-            signType = sign["Type"] #TODO check E/S
+            split = sign["DateTime"]["Data"].split(" ")            
+            signType = "E" if sign["ActualType"] == 1 else "S" #check E/S
             mySignDay = split[0]
             mySignHours =  split[1]
             date_object = datetime.datetime.strptime(mySignDay, '%Y-%m-%d')
-            date_title = date_object.strftime("%a,%d/%m/%Y").
+            date_title = date_object.strftime("%a,%d/%m/%Y")
             if current_date is None:
                 current_date = date_title
             if date_title != current_date:                
                 x.add_column(current_date, mycolum) 
                 mycolum = []
                 current_date = date_title                
-            mycolum.append(mySignHours)
+            mycolum.append(mySignHours + " " + signType)
 
         if len(mycolum)> 0:
             x.add_column(current_date, mycolum)
-                
-        #https://vtliveapi.visualtime.net/api/v2/PunchesService.svc/GetPunchesBetweenDates?Token=YVhSbGNqUXhOemM9ODgwMDhhMDFlNjM3OTkxNTE1ODBmMmQzYWYxNzcxMDhmZjczNDljYzM4MzlmM2RmZDVlNTBkOWMyNzlhODQzNw%3D%3D&StartDate=2023-01-01%2007%3A30%3A00%20%2B01&EndDate=2023-02-07%2009%3A30%3A00%20%2B01&EmployeeID=457
-        return x.get_formatted_string("html")        
+               
+        return x.get_string()
+        #return x.get_formatted_string("html")        
