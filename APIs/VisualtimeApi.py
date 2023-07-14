@@ -159,13 +159,13 @@ class VisualtimeApi:
                 start_date = datetime.datetime(today.year, today.month, today.day, 0, 0)
                 end_date = datetime.datetime(today.year, today.month, today.day, 23, 59)
             else:
-                start_date = datetime.datetime(start_date.year, start_date.month, start_date.day, 0,0)
+                #start_date = datetime.datetime(start_date.year, start_date.month, start_date.day, 0,0)
                 end_date = datetime.datetime(start_date.year, start_date.month, start_date.day, 23,59)
         else:
             if start_date is None:                            
                 start_date = datetime.datetime(end_date.year, end_date.month, end_date.day, 0,0)
-            else:
-                start_date = datetime.datetime(start_date.year, start_date.month, start_date.day, 0,0)
+            #else:
+                #start_date = datetime.datetime(start_date.year, start_date.month, start_date.day, 0,0)
             end_date = datetime.datetime(end_date.year, end_date.month, end_date.day, 23,59)
         
         offset = " +01"  #winter time
@@ -173,7 +173,9 @@ class VisualtimeApi:
             offset = " +02"     #summer time
                     
         date1 = start_date.strftime("%Y-%m-%d %H:%M:%S")        
-        date2 = end_date.strftime("%Y-%m-%d %H:%M:%S") 
+        date2 = end_date.strftime("%Y-%m-%d %H:%M:%S")
+        print(date1)
+        print(date2)
         start_date = urllib.parse.quote(date1 + offset)
         end_date = urllib.parse.quote(date2 + offset)
         contents = urllib.request.urlopen(VisualtimeApi.URL_PUNCHES + "GetPunchesBetweenDates?Token=" + VisualtimeApi.TOKEN + "&StartDate=" + start_date + "&EndDate=" + end_date + "&EmployeeID=" + employeeID).read()       
@@ -196,6 +198,7 @@ class VisualtimeApi:
                 mycolum = []
                 current_date = date_title                
             mycolum.append(mySignHours + " " + signType)
+            print(mySignHours)
 
         if len(mycolum)> 0:
             x.add_column(current_date, mycolum)

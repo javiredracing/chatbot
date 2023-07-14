@@ -181,16 +181,18 @@ nlu:
     - dime mis fichajes
     - fichajes
     - fichajes de hoy
-    - enseñame mis fichajes de [hoy](start_date)
-    - dime mis fichajes de [hoy](start_date)
-    - dime mis fichajes de [la semana pasada](range_date)
-    - dime mis fichajes de [el mes pasado](range_date)
-    - muestrame mis fichajes desde el [11/12/2020](start_date) hasta [hoy](end_date)
-    - dime mis fichajes desde [el 12-4-2022](start_date) hasta el [11-5-2022](end_date)
+    - enseñame mis fichajes de hoy
+    - dime mis fichajes de hoy
+    - dime mis fichajes de la semana pasada
+    - dime mis fichajes del mes pasado
+    - muestrame mis fichajes desde 11/12/2020 hasta 1/9/2023
+    - dime mis fichajes desde el 12-4-2022 hasta el 11-5-2022
+    - fichajes entre 9/8/2021 y 14/8/2022
 
 - intent: retry
   examples: |
     - Quiero volver a hacerlo
-    - Quiero reintentarlo
+    - voy a reintentarlo
     - reintentar
+    - hacer otra vez
 

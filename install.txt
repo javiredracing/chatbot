@@ -1,6 +1,11 @@
 installing spacy:
 pip3 install rasa[spacy]
-python -m spacy download es_core_news_sm
+python -m spacy download es_core_news_md
 if error: https://github.com/explosion/spaCy/issues/12659 -> downgrade : pip install --force-reinstall -v "typing-extensions==4.5.0"
 
 install prettytable
+install dateparser: pip install dateparser
+
+duckling docker container: (https://hub.docker.com/r/rasa/duckling)
+a) docker pull rasa/duckling
+b) docker run -p 8000:8000 rasa/duckling

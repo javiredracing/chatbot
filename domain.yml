@@ -21,9 +21,7 @@ intents:
 
 entities:
 - accruals
-- start_date
-- end_date
-- range_date
+- time
 
 forms:
   auth_form:

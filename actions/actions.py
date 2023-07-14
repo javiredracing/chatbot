@@ -82,22 +82,51 @@ class Signings(Action):
     
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         userCode = tracker.get_slot("access_id")
-        start_date = next(tracker.get_latest_entity_values("start_date"), None)
-        print(start_date)
-        end_date = next(tracker.get_latest_entity_values("end_date"), None)
-        print(end_date)
-        if start_date is not None:
-            start_date = dateparser.parse(start_date)
-        if end_date is not None:
-            end_date = dateparser.parse(end_date)
-        #print(start_date)
-        if userCode is not None:
-            result = VisualtimeApi.getSignings(userCode, start_date, end_date)
-            if result is None:                    
-                result = "Información no disponible"
-            dispatcher.utter_message(text = result)
+        dates = [None,None]
+        cont = 0
+        for entity in tracker.latest_message['entities']:
+            if entity['entity'] == 'time':
+                for date in entity['additional_info']['values']:
+                    date = entity['additional_info']['values'][0]
+                    dates[cont] = date
+                    continue
+                cont = cont + 1
+                
+        date1 = None
+        date2 = None
+        if dates[0] is not None:
+            date1 = dateparser.parse(dates[0]['value'])
+            if dates[1] is not None:
+                date2 = dateparser.parse(dates[1]['value'])
+                if date1 > date2:
+                    tmp = date1
+                    date1 = date2
+                    date2 = tmp 
+            else:
+                if dates[0]['grain'] == "day":
+                    date2 = date1 + datetime.timedelta(days=1)
+                elif dates[0]['grain'] == "month":
+                    date2 = date1 + datetime.timedelta(days=30)
+                elif dates[0]['grain'] == "week": 
+                    date2 = date1 + datetime.timedelta(weeks=1)
+                else:
+                    date2 = date1 + datetime.timedelta(days=365)
         else:
-            dispatcher.utter_message(response = "utter_authentication_failure")
+            today = datetime.datetime.now() 
+            date1 = datetime.datetime(today.year, today.month, today.day, 0, 0)
+            date2 = datetime.datetime(today.year, today.month, today.day, 23, 59)
+            
+           
+        #TODO if year is upper than today, minus 1 year
+        print(date1)
+        print(date2)
+        # if userCode is not None:
+            # result = VisualtimeApi.getSignings(userCode, start_date, end_date)
+            # if result is None:                    
+                # result = "Información no disponible"
+            # dispatcher.utter_message(text = result)
+        # else:
+            # dispatcher.utter_message(response = "utter_authentication_failure")
         return[]
         
 class ClearLogin(Action): 
