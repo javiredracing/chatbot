@@ -138,7 +138,20 @@ class Signings(Action):
         else:
             dispatcher.utter_message(response = "utter_authentication_failure")
         return[]
-        
+ 
+class MakeSignings(Action):
+    def name(self) -> Text:
+        return "action_make_signing"
+    
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        userCode = tracker.get_slot("access_id")
+        if userCode is not None:
+            result = VisualtimeApi.makeSigning(userCode)
+            dispatcher.utter_message(text = result)
+        else:
+            dispatcher.utter_message(response = "utter_authentication_failure")
+        return[]
+    
 class ClearLogin(Action): 
     def name(self) -> Text:
         return "action_clear_login"

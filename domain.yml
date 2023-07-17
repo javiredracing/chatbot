@@ -8,6 +8,7 @@ intents:
 - goodbye
 - greet
 - help
+- make_signing
 - mood_great
 - mood_unhappy
 - nlu_fallback
@@ -111,7 +112,12 @@ responses:
   utter_retry:
   - text: Quieres autenticarte de nuevo?
   utter_default:
-  - text: No lo entiendo, hazme otra pregunta.
+  - text: No lo entiendo, hazme otra pregunta.  
+  utter_make_signing:
+  - text: Para fichar pulsa el botón
+    buttons:
+    - title: "Fichar"
+      payload: "/affirm"
 
 session_config:
   session_expiration_time: 60
@@ -128,6 +134,9 @@ actions:
 - utter_greet
 - action_show_days_off
 - action_show_accruals
+- utter_make_signing
+- action_make_signing
 - utter_out_of_scope
 - utter_please_rephrase
 - utter_thanks
+

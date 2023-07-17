@@ -88,6 +88,7 @@ nlu:
     - Eres una persona?
 - intent: authentication
   examples: |
+    - quiero iniciar la sesión
     - Puedes loguearme?
     - Cómo me logueo?
     - Puedes autentificarme?
@@ -181,8 +182,8 @@ nlu:
   examples: |
     - Enseñame mis fichajes
     - dime mis fichajes
-    - fichajes
-    - fichajes de hoy
+    - ver mis fichajes de hoy
+    - quiero ver mis registros
     - enseñame mis fichajes de hoy
     - dime mis fichajes de hoy
     - dime mis fichajes de la semana pasada
@@ -190,6 +191,17 @@ nlu:
     - muestrame mis fichajes desde 11/12/2020 hasta 1/9/2023
     - dime mis fichajes desde el 12-4-2022 hasta el 11-5-2022
     - fichajes entre 9/8/2021 y 14/8/2022
+    
+- intent: make_signing
+  examples: |
+    - fichar
+    - registrar entrada
+    - registrar salida
+    - registrar acceso
+    - anotar fichaje
+    - anotar entrada
+    - quiero fichar
+    - quiero registrar la entrada
 
 - intent: retry
   examples: |

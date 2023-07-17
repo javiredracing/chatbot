@@ -62,3 +62,10 @@ stories:
   steps:
   - intent: show_signings
   - action: action_show_signings
+  
+- story: make signings
+  steps:
+  - intent: make_signing
+  - action: utter_make_signing
+  - intent: affirm
+  - action: action_make_signing

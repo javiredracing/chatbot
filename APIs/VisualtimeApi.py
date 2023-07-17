@@ -18,7 +18,7 @@ class VisualtimeApi:
         contents = urllib.request.urlopen(VisualtimeApi.URL + "GetPublicHolidays?Token="+VisualtimeApi.TOKEN).read()
         data_json = json.loads(contents) 
         x = PrettyTable()
-        x.title = "Days off"
+        x.title = "Días libres"
         x.field_names = ["Festivo", "Fecha", "Tipo"]
         for days in data_json["Value"]:
             title = days["ID"]
@@ -188,4 +188,10 @@ class VisualtimeApi:
             return x.get_formatted_string("html") 
         else:
             return None
-       
+    
+    @staticmethod     
+    def makeSigning(employeeID):
+        today = datetime.datetime.now()
+        date = today.strftime("%H:%M:%S, %A %d-%m-%Y")
+        return "Fichaje realizado: "+ date
+        

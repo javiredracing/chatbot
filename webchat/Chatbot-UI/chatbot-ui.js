@@ -32,30 +32,16 @@ function init() {
 		<div class='chat-area'>
             <div class='bot-msg'>
                 <img class='bot-img' src ='${botLogoPath}' />
-				<span class='msg'>Hi, How can i help you?</span>
+				<span class='msg'>Hola, ¿cómo puedo ayudarte?</span>
 			</div>
 
-            <!-- <div class='bot-msg'>
-                <img class='bot-img' src ='${botLogoPath}' />
-                <div class='response-btns'>
-                    <button class='btn-primary' onclick= 'userResponseBtn(this)' value='/sign_in'>sample btn</button>            
-                </div>
-			</div> -->
-
-			<!-- <div class='bot-msg'>
-				<img class='msg-image' src = "https://i.imgur.com/nGF1K8f.jpg" />
-			</div> -->
-
-			<!-- <div class='user-msg'>
-				<span class='msg'>Hi, How can i help you?</span>
-			</div> -->
 			
 
 		</div>
 
 
 		<div class='chat-input-area'>
-			<input type='text' autofocus class='chat-input' onkeypress='return givenUserInput(event)' placeholder='Type a message ...' autocomplete='off'>
+			<input type='text' autofocus class='chat-input' onkeypress='return givenUserInput(event)' placeholder='Escribe un mensaje...' autocomplete='off'>
 			<button class='chat-submit'><i class='material-icons'>send</i></button>
 		</div>
 
@@ -185,6 +171,7 @@ function send(message) {
 
 //------------------------------------ Set bot response -------------------------------------
 function setBotResponse(val) {
+	console.log(val)
     setTimeout(function() {
         if (val.length < 1) {
             //if there is no response from Rasa
@@ -218,10 +205,11 @@ function setBotResponse(val) {
 			}
 
 			//check if there are buttons
-			if (val.hasOwnProperty("buttons")) {
+			if (val.hasOwnProperty("quick_replies")) {
+				console.log("llega!")
 				var BotResponse = `<div class='bot-msg'><img class='bot-img' src ='${botLogoPath}' /><div class='response-btns'>`
 
-				buttonsArray = val.buttons;
+				var buttonsArray = val.quick_replies;
 				buttonsArray.forEach(btn => {
 					BotResponse += `<button class='btn-primary' onclick= 'userResponseBtn(this)' value='${btn.payload}'>${btn.title}</button>`
 				})
@@ -330,7 +318,7 @@ socket.on("disconnect", () => {
 });
 
 socket.on('connect', () =>{
-	console.log('Connected to Socket.io server.');
+	//console.log('Connected to Socket.io server.');
 	socket.emit('session_request', {
 		'session_id': getSessionId(),
 	});
@@ -343,6 +331,6 @@ socket.on('connect_error', (error) => {
 });
 
 socket.on('bot_uttered',  (response) =>{
-	console.log('Bot uttered:', response);
+	//console.log('Bot uttered:', response);
 	setBotResponse(response);
 });
