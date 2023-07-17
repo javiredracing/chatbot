@@ -147,61 +147,45 @@ class VisualtimeApi:
             return x.get_formatted_string("html")
             
     @staticmethod     
-    def getSignings(employeeID, start_date = None, end_date = None):
-        
-        # if date1 > date2:
-            # tmp = start_date
-            # start_date = end_date
-            # end_date = tmp                   
-        if end_date is None :           
-            if start_date is None:     
-                today = datetime.datetime.now() 
-                start_date = datetime.datetime(today.year, today.month, today.day, 0, 0)
-                end_date = datetime.datetime(today.year, today.month, today.day, 23, 59)
-            else:
-                #start_date = datetime.datetime(start_date.year, start_date.month, start_date.day, 0,0)
-                end_date = datetime.datetime(start_date.year, start_date.month, start_date.day, 23,59)
-        else:
-            if start_date is None:                            
-                start_date = datetime.datetime(end_date.year, end_date.month, end_date.day, 0,0)
-            #else:
-                #start_date = datetime.datetime(start_date.year, start_date.month, start_date.day, 0,0)
-            end_date = datetime.datetime(end_date.year, end_date.month, end_date.day, 23,59)
-        
-        offset = " +01"  #winter time
-        if time.localtime().tm_isdst > 0:
-            offset = " +02"     #summer time
-                    
-        date1 = start_date.strftime("%Y-%m-%d %H:%M:%S")        
-        date2 = end_date.strftime("%Y-%m-%d %H:%M:%S")
-        print(date1)
-        print(date2)
-        start_date = urllib.parse.quote(date1 + offset)
-        end_date = urllib.parse.quote(date2 + offset)
-        contents = urllib.request.urlopen(VisualtimeApi.URL_PUNCHES + "GetPunchesBetweenDates?Token=" + VisualtimeApi.TOKEN + "&StartDate=" + start_date + "&EndDate=" + end_date + "&EmployeeID=" + employeeID).read()       
-        data_json = json.loads(contents)
-        x = PrettyTable()
-        x.title = "Fichajes"       
-        mycolum = []
-        current_date = None
-        for sign in data_json["Value"]:
-            split = sign["DateTime"]["Data"].split(" ")            
-            signType = "E" if sign["ActualType"] == 1 else "S" #check E/S
-            mySignDay = split[0]
-            mySignHours =  split[1]
-            date_object = datetime.datetime.strptime(mySignDay, '%Y-%m-%d')
-            date_title = date_object.strftime("%a,%d/%m/%Y")
-            if current_date is None:
-                current_date = date_title
-            if date_title != current_date:                
-                x.add_column(current_date, mycolum) 
-                mycolum = []
-                current_date = date_title                
-            mycolum.append(mySignHours + " " + signType)
-            print(mySignHours)
+    def getSignings(employeeID, start_date = None, end_date = None):        
+        if start_date is not None and end_date is not None:
+            offset = " +01"  #winter time
+            if time.localtime().tm_isdst > 0:
+                offset = " +02"     #summer time
+                        
+            date1 = start_date.strftime("%Y-%m-%d %H:%M:%S")        
+            date2 = end_date.strftime("%Y-%m-%d %H:%M:%S")
+            start_date = urllib.parse.quote(date1 + offset)
+            end_date = urllib.parse.quote(date2 + offset)
+            contents = urllib.request.urlopen(VisualtimeApi.URL_PUNCHES + "GetPunchesBetweenDates?Token=" + VisualtimeApi.TOKEN + "&StartDate=" + start_date + "&EndDate=" + end_date + "&EmployeeID=" + employeeID).read()       
+            data_json = json.loads(contents)
+            x = PrettyTable()
+            x.title = "Fichajes"  
+            x.field_names = ["Fecha", "Hora", "Tipo"]            
+            #mycolum = []
+            #current_date = None
+            for sign in data_json["Value"]:
+                split = sign["DateTime"]["Data"].split(" ")            
+                signType = "E" if sign["ActualType"] == 1 else "S" #check E/S
+                mySignDay = split[0]
+                mySignHours =  split[1]
+                date_object = datetime.datetime.strptime(mySignDay, '%Y-%m-%d')
+                date_title = date_object.strftime("%a,%d/%m/%Y")
+                x.add_row([date_title, mySignHours, signType]) 
+                # if current_date is None:
+                    # current_date = date_title
+                # if date_title != current_date:                
+                    # x.add_column(current_date, mycolum) 
+                    # mycolum = []
+                    # current_date = date_title                
+                # mycolum.append(mySignHours + " " + signType)
+                # print(mySignHours)
 
-        if len(mycolum)> 0:
-            x.add_column(current_date, mycolum)
-               
-        return x.get_string()
-        #return x.get_formatted_string("html")        
+            # if len(mycolum)> 0:
+                # x.add_column(current_date, mycolum)
+                   
+            #return x.get_string()
+            return x.get_formatted_string("html") 
+        else:
+            return None
+       

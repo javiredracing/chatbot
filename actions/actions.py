@@ -13,6 +13,7 @@ from rasa_sdk.executor import CollectingDispatcher
 
 from APIs.VisualtimeApi import *
 import dateparser
+from dateutil.relativedelta import relativedelta
 
 class AuthenticatedAction(Action):
     def name(self) -> Text:
@@ -65,6 +66,7 @@ class Accruals(Action):
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:        
         userCode = tracker.get_slot("access_id")
+        print(json.dumps(tracker.latest_message['entities']))
         accrual = next(tracker.get_latest_entity_values("accruals"), None)
         if userCode is not None:            
             result = VisualtimeApi.getAccruals(userCode, accrual)
@@ -81,52 +83,60 @@ class Signings(Action):
         return "action_show_signings"
     
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        
         userCode = tracker.get_slot("access_id")
-        dates = [None,None]
-        cont = 0
+        
+        start_date = None
+        end_date = None
+        jsondate = None
+        
+        #print(json.dumps(tracker.latest_message['entities']))
         for entity in tracker.latest_message['entities']:
             if entity['entity'] == 'time':
-                for date in entity['additional_info']['values']:
-                    date = entity['additional_info']['values'][0]
-                    dates[cont] = date
-                    continue
-                cont = cont + 1
-                
-        date1 = None
-        date2 = None
-        if dates[0] is not None:
-            date1 = dateparser.parse(dates[0]['value'])
-            if dates[1] is not None:
-                date2 = dateparser.parse(dates[1]['value'])
-                if date1 > date2:
-                    tmp = date1
-                    date1 = date2
-                    date2 = tmp 
-            else:
-                if dates[0]['grain'] == "day":
-                    date2 = date1 + datetime.timedelta(days=1)
-                elif dates[0]['grain'] == "month":
-                    date2 = date1 + datetime.timedelta(days=30)
-                elif dates[0]['grain'] == "week": 
-                    date2 = date1 + datetime.timedelta(weeks=1)
-                else:
-                    date2 = date1 + datetime.timedelta(days=365)
-        else:
+                if entity['additional_info']['type'] == "value":
+                    jsondate = entity['additional_info']['values'][0]                    
+                    if start_date is None:
+                        start_date = dateparser.parse(jsondate['value'])
+                    else:
+                        end_date = dateparser.parse(jsondate['value'])
+                        break           
+                    
+                elif entity['additional_info']['type'] == "interval":
+                    start_date = dateparser.parse(entity['value']['from'])
+                    end_date = dateparser.parse(entity['value']['to'])                    
+                    break
+
+        if start_date is None:
             today = datetime.datetime.now() 
-            date1 = datetime.datetime(today.year, today.month, today.day, 0, 0)
-            date2 = datetime.datetime(today.year, today.month, today.day, 23, 59)
-            
-           
-        #TODO if year is upper than today, minus 1 year
-        print(date1)
-        print(date2)
-        # if userCode is not None:
-            # result = VisualtimeApi.getSignings(userCode, start_date, end_date)
-            # if result is None:                    
-                # result = "Información no disponible"
-            # dispatcher.utter_message(text = result)
-        # else:
-            # dispatcher.utter_message(response = "utter_authentication_failure")
+            start_date = datetime.datetime(today.year, today.month, today.day, 0, 0)
+            end_date = datetime.datetime(today.year, today.month, today.day, 23, 59)
+        
+        elif end_date is None:
+            if jsondate['grain'] == "day":               
+                end_date = start_date + datetime.timedelta(days=1)
+            elif jsondate['grain'] == "month":
+                if start_date.date() > datetime.date.today():
+                    start_date = start_date + relativedelta(years=-1)
+                end_date = start_date + relativedelta(months=+1)
+            elif jsondate['grain'] == "week": 
+                end_date = start_date + datetime.timedelta(weeks=1)
+            else:
+                end_date = start_date + relativedelta(years=-1)
+        
+        if start_date > end_date:
+            tmp = start_date
+            start_date = end_date
+            end_date = tmp          
+        
+        #print(start_date)
+        #print(end_date)
+        if userCode is not None:
+            result = VisualtimeApi.getSignings(userCode, start_date, end_date)
+            if result is None:                    
+                result = "Información no disponible"
+            dispatcher.utter_message(text = result)
+        else:
+            dispatcher.utter_message(response = "utter_authentication_failure")
         return[]
         
 class ClearLogin(Action): 

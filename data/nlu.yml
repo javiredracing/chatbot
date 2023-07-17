@@ -168,6 +168,8 @@ nlu:
     - enseñame mis saldos
     - saldos
     - enseñame mi [bolsa de horas]{"entity": "accruals", "value": "BHS"}
+    - muestrame mi [bolsa de horas]{"entity": "accruals", "value": "BHS"}
+    - dime la [bolsa de horas]{"entity": "accruals", "value": "BHS"}
     - [bolsa de horas]{"entity": "accruals", "value": "BHS"}
     - [lactancia]{"entity": "accruals", "value": "LAC"}
     - Enseñame mi saldo de [lactancia]{"entity": "accruals", "value": "LAC"}
