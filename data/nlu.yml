@@ -126,19 +126,21 @@ nlu:
     - Estoy confuso
     - necesito asistencia
     - muestrame la ayuda
+
 - intent: out_of_scope
   examples: |
-    - Que tiempo hace?
-    - Como es el tiempo en New York
-    - Qué hay para cenar?
-    - Háblame de algo
-    - Dime algo
-    
-- intent: nlu_fallback
-  examples: |
-    - dime como cambiar una rueda
-    - dime algo aleatorio
-    - no quiero un seguro
+    - ¿Puedes buscar esto: qué es?
+    - Mira esto: ¿qué es?
+    - ¿Puedes comprobar: qué es?
+    - por favor verifica: ¿Qué es?
+    - ¿Puedes buscar esto: dónde está?
+    - Mira esto: ¿dónde está?
+    - ¿Puedes comprobar: dónde está?
+    - por favor verifica: ¿dónde está?
+    - comprueba como se hace
+    - dime como puedo hacer    
+    - ¿como se puede solicitar?
+
 - intent: show_days_off
   examples: |
     - Muestrame mis dias libres

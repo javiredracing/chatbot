@@ -159,7 +159,17 @@ class ClearLogin(Action):
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         return[SlotSet("password",None), SlotSet("identifier",None), SlotSet("access_id", None)]
 
-           
+class ActionDefaultFallback(Action):
+    """Executes the fallback action and goes back to the previous state
+    of the dialogue"""
+    def name(self) -> Text:
+        return "action_default_fallback"
+
+    async def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any],) -> List[Dict[Text, Any]]:
+        dispatcher.utter_message(template="utter_default")
+        return [UserUtteranceReverted()]
+
+          
 '''        
 class ValidateAuthFormAction(FormValidationAction):
     def name(self) -> Text:

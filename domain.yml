@@ -106,7 +106,7 @@ responses:
   - text: Feliz de ayudar.
   - text: No fue nada.
   utter_out_of_scope:
-  - text: No entiendo lo que estas pidiendo
+  - text: Te redidirijo al sistema de búsqueda.
   utter_please_rephrase:
   - text: No lo entiendo. ¿Puedes reescribirlo?
   utter_retry:
